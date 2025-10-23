@@ -1,3 +1,4 @@
+import type { IModalWindowProps } from '../../ModalWindow/ModalWindow.tsx'
 
 interface contentData {
     name: string
@@ -11,6 +12,7 @@ export interface ISmartButton {
     iconProps?: IIconSmartButton
     contentType: string
     contentData: string | contentData
+    clickAction: React.ComponentType<IModalWindowProps>
 }
 
 //Тип для массива кнопок
