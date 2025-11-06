@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from 'react'
+import { useRef, useCallback, useState, useEffect } from 'react'
 
 interface IPosition {
     x: number
@@ -16,17 +16,23 @@ const useDynamicsModalWindow = (initialPosition: IPosition = {x: 200, y: 200}) =
     const [position, setPosition] = useState<IPosition>(initialPosition);
     const [size, setSize] = useState<ISize>({width: 600, height: 800});
 
+    const positionRef = useRef(position)
+
+    useEffect(() => {
+        positionRef.current = position
+    }, [position])
+
     const handleResize = useCallback((direction: string, deltaX: number, deltaY: number) => {
 
         setSize(prevSize => {
             const newSize = { ...prevSize }
-            const newPosition = { ...position }
-        
+            const currentPosition = { ...positionRef.current }
+    
 
         switch(direction) {
             case 'top':
                 newSize.height = Math.max(500, prevSize.height - deltaY)
-                newPosition.y += deltaY
+                currentPosition.y += deltaY
                 break
             case 'right':
                 newSize.width = Math.max(400, prevSize.width + deltaX)
@@ -36,23 +42,23 @@ const useDynamicsModalWindow = (initialPosition: IPosition = {x: 200, y: 200}) =
                 break
             case 'left':
                 newSize.width = Math.max(400, prevSize.width - deltaX)
-                newPosition.x += deltaX
+                currentPosition.x += deltaX
                 break
             case 'top-left':
                 newSize.height = Math.max(500, prevSize.height - deltaY)
                 newSize.width = Math.max(400, prevSize.width - deltaX)
-                newPosition.y += deltaY
-                newPosition.x += deltaX
+                currentPosition.y += deltaY
+                currentPosition.x += deltaX
                 break
             case 'top-right':
                 newSize.width = Math.max(300, prevSize.width + deltaX)
                 newSize.height = Math.max(200, prevSize.height - deltaY)
-                newPosition.y += deltaY
+                currentPosition.y += deltaY
                 break
             case 'bottom-left':
                 newSize.width = Math.max(300, prevSize.width - deltaX)
                 newSize.height = Math.max(200, prevSize.height + deltaY)
-                newPosition.x += deltaX
+                currentPosition.x += deltaX
                 break
             case 'bottom-right':
                 newSize.width = Math.max(300, prevSize.width + deltaX)
@@ -60,11 +66,11 @@ const useDynamicsModalWindow = (initialPosition: IPosition = {x: 200, y: 200}) =
                 break    
             }
 
-            setPosition(newPosition)
+            setPosition(currentPosition)
             return newSize
         })
 
-    }, [position])
+    }, [])
 
     const handleDrag = useCallback((deltaX: number, deltaY: number) => {
         setPosition(prev => ({
@@ -80,6 +86,7 @@ const useDynamicsModalWindow = (initialPosition: IPosition = {x: 200, y: 200}) =
         handleResize,
         handleDrag
     }
+    
 }
 
 export default useDynamicsModalWindow

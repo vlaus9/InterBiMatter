@@ -10,13 +10,18 @@ const useDragResize = (
         e.preventDefault()
         e.stopPropagation()
 
-        const startX = e.clientX
-        const startY = e.clientY
+        let startX = e.clientX
+        let startY = e.clientY
 
         const handleMouseMove = (moveEvent: MouseEvent) => {
-            const deltaX = moveEvent.clientX - startX
-            const deltaY = moveEvent.clientY - startY
+            let deltaX = moveEvent.clientX - startX
+            let deltaY = moveEvent.clientY - startY
             onResize(direction, deltaX, deltaY)
+
+            startX = moveEvent.clientX
+            startY = moveEvent.clientY
+            deltaX = 0
+            deltaY = 0
         }
 
         const handleMouseUp = () => {
@@ -33,13 +38,16 @@ const useDragResize = (
 
         e.preventDefault()
 
-        const startX = e.clientX
-        const startY = e.clientY
+        let startX = e.clientX
+        let startY = e.clientY
 
         const handleMouseMove = (moveEvent: MouseEvent) => {
             const deltaX = moveEvent.clientX - startX
             const deltaY = moveEvent.clientY - startY
             onDrag(deltaX, deltaY)
+
+            startX = moveEvent.clientX
+            startY = moveEvent.clientY
         }
 
         const handleMouseUp = () => {
