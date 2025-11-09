@@ -14,12 +14,48 @@ const useDragResize = (
         let startY = e.clientY
 
         const handleMouseMove = (moveEvent: MouseEvent) => {
-            let deltaX = moveEvent.clientX - startX
-            let deltaY = moveEvent.clientY - startY
+
+            const screenWidth = window.innerWidth
+            const screenHeight = window.innerHeight
+
+            const currentX = moveEvent.clientX
+            const currentY = moveEvent.clientY
+
+            let deltaX = currentX - startX
+            let deltaY = currentY - startY
+
+            console.log(deltaX)
+
+            if (currentX <= 0) {
+                deltaX = -startX
+            } else if (currentX >= screenWidth - 1) {
+                deltaX = screenWidth - 1 - startX
+            }
+
+            if (currentY <= 0) {
+                deltaY = -startY
+            } else if (currentY >= screenHeight - 1) {
+                deltaY = screenHeight - 1 - startY
+            }
+
             onResize(direction, deltaX, deltaY)
 
+            
             startX = moveEvent.clientX
             startY = moveEvent.clientY
+
+            if (currentX <= 0) {
+                startX = 0
+            } else if (currentX >= screenWidth - 1) {
+                startX = screenWidth - 1
+            }
+
+            if (currentY <= 0) {
+                startY = 0
+            } else if (currentY >= screenHeight - 1) {
+                startY = screenHeight - 1
+            }
+
             deltaX = 0
             deltaY = 0
         }
