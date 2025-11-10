@@ -19,6 +19,7 @@ const useDynamicsModalWindow = (
     const [position, setPosition] = useState<IPosition>(initialPosition);
     const [size, setSize] = useState<ISize>(initialSize);
 
+
     const positionRef = useRef(position)
     const sizeRef = useRef(size)
 
@@ -39,7 +40,10 @@ const useDynamicsModalWindow = (
             let widthBlocked = false
             let heightBlocked = false
             
+            const rect = modalWindowRef.current?.getBoundingClientRect()
     
+            const screenWidth = window.innerWidth
+            const screenHeight = window.innerHeight
 
         switch(direction) {
             case 'top':
@@ -53,7 +57,7 @@ const useDynamicsModalWindow = (
                 newSize.width = Math.max(initialSize.width, prevSize.width + deltaX)
                 break
             case 'bottom':
-                newSize.height = Math.max(initialSize.height, prevSize.height + deltaY)
+                newSize.height = Math.max(initialSize.height, (Math.min(rect!.bottom + deltaY, screenHeight) - rect!.top))
                 break
             case 'left':
                 newSize.width = Math.max(initialSize.width, prevSize.width - deltaX)
@@ -106,10 +110,23 @@ const useDynamicsModalWindow = (
     }, [])
 
     const handleDrag = useCallback((deltaX: number, deltaY: number) => {
+        
+        const rect = modalWindowRef.current?.getBoundingClientRect()
+        if (!rect) return
+
+        console.log(rect)
+
+        const screenWidth = window.innerWidth
+        const screenHeight = window.innerHeight
+
+        const maxX = screenWidth - rect.width
+        const maxY = screenHeight - rect.height
+
         setPosition(prev => ({
-            x: Math.max(0, prev.x + deltaX),
-            y: Math.max(0, prev.y + deltaY)
+            x: Math.max(0, Math.min(prev.x + deltaX, maxX)),
+            y: Math.max(0, Math.min(prev.y + deltaY, maxY))
         }))
+
     }, [])
 
     return {
