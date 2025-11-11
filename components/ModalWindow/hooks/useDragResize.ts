@@ -24,8 +24,6 @@ const useDragResize = (
             let deltaX = currentX - startX
             let deltaY = currentY - startY
 
-            console.log(deltaX)
-
             if (currentX <= 0) {
                 deltaX = -startX
             } else if (currentX >= screenWidth - 1) {

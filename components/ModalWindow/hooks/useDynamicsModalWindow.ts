@@ -33,73 +33,52 @@ const useDynamicsModalWindow = (
 
     const handleResize = useCallback((direction: string, deltaX: number, deltaY: number) => {
 
+        const rect = modalWindowRef.current?.getBoundingClientRect()
+        if (!rect) return
+        
         setSize(prevSize => {
+            
             const newSize = { ...prevSize }
             const currentPosition = { ...positionRef.current }
-
-            let widthBlocked = false
-            let heightBlocked = false
-            
-            const rect = modalWindowRef.current?.getBoundingClientRect()
+        
     
             const screenWidth = window.innerWidth
             const screenHeight = window.innerHeight
 
         switch(direction) {
             case 'top':
-                newSize.height = Math.max(initialSize.height, prevSize.height - deltaY)
-                heightBlocked = newSize.height === initialSize.height
-                if (!heightBlocked) {
-                    currentPosition.y = Math.max(0, currentPosition.y + deltaY)
-                }
+                newSize.height = Math.max(initialSize.height, Math.min(rect.bottom - (rect.top + deltaY), rect.bottom))
+                currentPosition.y = Math.max(0, Math.min(currentPosition.y + deltaY, rect.bottom - initialSize.height))
                 break
             case 'right':
-                newSize.width = Math.max(initialSize.width, prevSize.width + deltaX)
+                newSize.width = Math.max(initialSize.width, Math.min(rect.width + deltaX, screenWidth - rect.left - 8))
                 break
             case 'bottom':
-                newSize.height = Math.max(initialSize.height, (Math.min(rect!.bottom + deltaY, screenHeight) - rect!.top))
+                newSize.height = Math.max(initialSize.height, (Math.min(rect.bottom + deltaY, screenHeight - 8) - rect.top))
                 break
             case 'left':
-                newSize.width = Math.max(initialSize.width, prevSize.width - deltaX)
-                widthBlocked = newSize.width === initialSize.width
-                if (!widthBlocked) {
-                    currentPosition.x += deltaX
-                }
+                newSize.width = Math.max(initialSize.width, Math.min(rect.width - deltaX, rect.right))
+                currentPosition.x = Math.max(0, Math.min(rect.left + deltaX, rect.right - initialSize.width))
                 break
             case 'top-left':
-                newSize.height = Math.max(initialSize.height, prevSize.height - deltaY)
-                newSize.width = Math.max(initialSize.width, prevSize.width - deltaX)
-
-                heightBlocked = newSize.height === initialSize.height
-                widthBlocked = newSize.width === initialSize.width
-
-                if (!heightBlocked) {
-                    currentPosition.y = Math.max(0, currentPosition.y + deltaY)
-                }
-
-                if (!widthBlocked) {
-                    currentPosition.x += deltaX
-                }
+                newSize.height = Math.max(initialSize.height, Math.min(rect.bottom - (rect.top + deltaY), rect.bottom))
+                newSize.width = Math.max(initialSize.width, Math.min(rect.width - deltaX, rect.right))
+                currentPosition.y = Math.max(0, Math.min(currentPosition.y + deltaY, rect.bottom - initialSize.height))
+                currentPosition.x = Math.max(0, Math.min(rect.left + deltaX, rect.right - initialSize.width))
                 break
             case 'top-right':
-                newSize.width = Math.max(initialSize.width, prevSize.width + deltaX)
-                newSize.height = Math.max(initialSize.height, prevSize.height - deltaY)
-                heightBlocked = newSize.height === initialSize.height
-                if (!heightBlocked) {
-                    currentPosition.y = Math.max(0, currentPosition.y + deltaY)
-                }
+                newSize.height = Math.max(initialSize.height, Math.min(rect.bottom - (rect.top + deltaY), rect.bottom))
+                newSize.width = Math.max(initialSize.width, Math.min(rect.width + deltaX, screenWidth - rect.left))
+                currentPosition.y = Math.max(0, Math.min(currentPosition.y + deltaY, rect.bottom - initialSize.height))
                 break
             case 'bottom-left':
-                newSize.width = Math.max(initialSize.width, prevSize.width - deltaX)
-                newSize.height = Math.max(initialSize.height, prevSize.height + deltaY)
-                widthBlocked = newSize.width === initialSize.width
-                if (!widthBlocked) {
-                    currentPosition.x += deltaX
-                }
+                newSize.height = Math.max(initialSize.height, (Math.min(rect.bottom + deltaY, screenHeight - 8) - rect.top))
+                newSize.width = Math.max(initialSize.width, Math.min(rect.width - deltaX, rect.right))
+                currentPosition.x = Math.max(0, Math.min(rect.left + deltaX, rect.right - initialSize.width))
                 break
             case 'bottom-right':
-                newSize.width = Math.max(initialSize.width, prevSize.width + deltaX)
-                newSize.height = Math.max(initialSize.height, prevSize.height + deltaY)
+                newSize.height = Math.max(initialSize.height, (Math.min(rect.bottom + deltaY, screenHeight - 8) - rect.top))
+                newSize.width = Math.max(initialSize.width, Math.min(rect.width + deltaX, screenWidth - rect.left - 8))
                 break    
             }
 
@@ -113,14 +92,13 @@ const useDynamicsModalWindow = (
         
         const rect = modalWindowRef.current?.getBoundingClientRect()
         if (!rect) return
+        
+        const screenWidth = document.documentElement.clientWidth
+        const screenHeight = document.documentElement.clientHeight
 
-        console.log(rect)
-
-        const screenWidth = window.innerWidth
-        const screenHeight = window.innerHeight
-
-        const maxX = screenWidth - rect.width
-        const maxY = screenHeight - rect.height
+        const maxX = screenWidth - Math.floor(rect.width) - 8 // - 8 для обхода скроллбара
+        const maxY = screenHeight - Math.floor(rect.height) - 8
+        console.log([rect, maxX, maxY, screenHeight])
 
         setPosition(prev => ({
             x: Math.max(0, Math.min(prev.x + deltaX, maxX)),
