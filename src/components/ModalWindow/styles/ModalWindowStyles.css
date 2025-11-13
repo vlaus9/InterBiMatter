@@ -1,0 +1,30 @@
+.modal-window-opening {
+    animation: opening 0.1s ease;
+}
+
+@keyframes opening {
+    from {
+        opacity: 0;
+        transform: scale(0.96)
+    }
+    to {
+        opacity: 1;
+        transform: scale(1)
+    }
+}
+
+
+.modal-window-closing {
+    animation: closing 0.1s ease;
+}
+
+@keyframes closing {
+    from {
+        opacity: 1;
+        transform: scale(1)
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.96)
+    }
+}

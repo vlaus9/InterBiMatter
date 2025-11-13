@@ -1,8 +1,6 @@
-import type { IModalWindowProps } from '../../ModalWindow/ModalWindow.tsx'
+import type { IModalWindowProps } from '../../ModalWindow/ModalWindowComponent.tsx'
+import type { IModalWindow } from '../../ModalWindow/types/ModalWindowTypes.ts'
 
-interface contentData {
-    name: string
-}
 
 //Интерфейс кнопки "для всего"
 export interface ISmartButton {
@@ -11,7 +9,7 @@ export interface ISmartButton {
     icon: React.ComponentType<IIconSmartButton>
     iconProps?: IIconSmartButton
     contentType: string
-    contentData: string | contentData
+    contentData: IModalWindow
     clickAction: React.ComponentType<IModalWindowProps>
 }
 

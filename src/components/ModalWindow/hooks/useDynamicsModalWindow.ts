@@ -12,7 +12,7 @@ interface ISize {
 
 const useDynamicsModalWindow = (
     initialPosition: IPosition = { x: 200, y: 200 },
-    initialSize: ISize = { width: window.innerWidth / 2, height: window.innerHeight / 1.5 }
+    initialSize: ISize = { width: window.innerWidth / 3.5, height: window.innerHeight / 2 }
     ) => {
 
     const modalWindowRef = useRef<HTMLDivElement>(null);
@@ -68,7 +68,7 @@ const useDynamicsModalWindow = (
                 break
             case 'top-right':
                 newSize.height = Math.max(initialSize.height, Math.min(rect.bottom - (rect.top + deltaY), rect.bottom))
-                newSize.width = Math.max(initialSize.width, Math.min(rect.width + deltaX, screenWidth - rect.left))
+                newSize.width = Math.max(initialSize.width, Math.min(rect.width + deltaX, screenWidth - rect.left - 8))
                 currentPosition.y = Math.max(0, Math.min(currentPosition.y + deltaY, rect.bottom - initialSize.height))
                 break
             case 'bottom-left':
@@ -98,7 +98,6 @@ const useDynamicsModalWindow = (
 
         const maxX = screenWidth - Math.floor(rect.width) - 8 // - 8 для обхода скроллбара
         const maxY = screenHeight - Math.floor(rect.height) - 8
-        console.log([rect, maxX, maxY, screenHeight])
 
         setPosition(prev => ({
             x: Math.max(0, Math.min(prev.x + deltaX, maxX)),

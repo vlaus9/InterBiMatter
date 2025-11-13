@@ -1,21 +1,38 @@
-import SmartButton from '../components/SmartButton/SmartButtonComponent'
-import { SmartButtonData } from '../components/SmartButton/data/SmartButtonData.ts'
-import ModalWindow from '../components/ModalWindow/ModalWindow.tsx' 
-import { ModalWindowData } from '../components/ModalWindow/data/ModalWindowData.ts'
+import SmartButton from './components/SmartButton/SmartButtonComponent.tsx'
+import { SmartButtonData } from './components/SmartButton/data/SmartButtonData.ts'
+import ModalWindow from './components/ModalWindow/ModalWindowComponent.tsx' 
+import { ModalWindowData } from './components/ModalWindow/data/ModalWindowData.ts'
+
 
 const App = () => {
 
   return (
     <>
+
+    <div className='absolute w-full h-full bg-[black]'> 
+
+    
       <div className='relative'>
-        <div className='absolute flex flex-col border w-auto left-[10px] top-[80px]'>
-          <div>
-            <SmartButton  config={SmartButtonData[0]}/>
+        <div className='absolute flex flex-col w-auto left-[1vw] top-[80px]'>
+
+          <div className='absolute rounded-[20px] top-[0] w-[70px] bg-[var(--button-group-primary-bg)] h-full shadow-[0_0_0_2px_#878585d6]'> 
           </div>
+
+          {SmartButtonData.map((el) => {
+            return (
+                    <div key={el.id}>
+                    <SmartButton config={el}/>
+                    </div>
+                    )
+          })}
+          
         </div>
 
         <ModalWindow config={ModalWindowData[0]}/>
       </div>
+
+
+    </div>  
       
     </>
   )
