@@ -21,12 +21,12 @@ const SmartButton: React.FC<ISmartButtonProps> = ({ config }) => {
         <>
             <div 
             className={`inline-block transition-all ${isHover ? 'scale-[1.1] translate-x-[15px]' : 'scale-[1]'}`}
-            onClick={() => dispatch(isOpen(config.contentData))}
             >
                 <div 
                 className={`flex items-center m-[5px] py-[5px] px-[10px] bg-[var(--bg-primary)] rounded-[15px] transition-all duration-300 ease-in-out ${isHover ? 'gap-[15px] shadow-[0_0_0_2px_#a29d9dd6]' : 'gap-0'} cursor-pointer`}
                 onMouseEnter={() => {setIsHover(true)}}
                 onMouseLeave={() => {setIsHover(false)}}
+                onClick={() => dispatch(isOpen(config.contentData))}
                 >
                     <button className={`smart-button-${config.id} w-[40px] h-[40px] rounded-[10px] cursor-pointer`}>
                         <IconButton {...IconButtonProps} />

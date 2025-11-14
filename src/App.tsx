@@ -1,10 +1,10 @@
 import SmartButton from './components/SmartButton/SmartButtonComponent.tsx'
 import { SmartButtonData } from './components/SmartButton/data/SmartButtonData.ts'
-import ModalWindow from './components/ModalWindow/ModalWindowComponent.tsx' 
-import { ModalWindowData } from './components/ModalWindow/data/ModalWindowData.ts'
-
+import ModalWindow from './components/ModalWindow/ModalWindow.tsx'
 
 const App = () => {
+
+  
 
   return (
     <>
@@ -28,7 +28,7 @@ const App = () => {
           
         </div>
 
-        <ModalWindow config={ModalWindowData[0]}/>
+        <ModalWindow />
       </div>
 
 

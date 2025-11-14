@@ -1,6 +1,6 @@
 import type { IModalWindow } from "./types/ModalWindowTypes"
 import ModalWindowDraggingFrame from "./move/ModalWindowDraggingFrame"
-import  useDynamicsModalWindow from './hooks/useDynamicsModalWindow'
+import useDynamicsModalWindow from './hooks/useDynamicsModalWindow'
 import useDragResize from './hooks/useDragResize'
 import { CloseOutlined } from '@ant-design/icons'
 import { useAppSelector, useAppDispatch } from "../../app/hooks"
@@ -12,7 +12,7 @@ export interface IModalWindowProps {
     config: IModalWindow
 }
 
-const ModalWindow: React.FC<IModalWindowProps> = ({ config }) => {
+const ModalWindowComponent: React.FC<IModalWindowProps> = ({ config }) => {
 
     const { modalWindowRef, position, size, handleResize, handleDrag } = useDynamicsModalWindow()
     const { onResizeStart, onDragStart } = useDragResize(handleResize, handleDrag)
@@ -50,5 +50,5 @@ const ModalWindow: React.FC<IModalWindowProps> = ({ config }) => {
     )
 }
 
-export default ModalWindow
+export default ModalWindowComponent
 
