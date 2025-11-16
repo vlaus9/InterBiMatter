@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import  isOpenModalWindowSlice  from '../components/ModalWindow/slices/isOpenModalWindowSlice'
+import authSlice from '../components/Auth/slices/authSlice'
 
 export const store = configureStore({
     reducer: {
-        isOpenModalWindowSlice
+        isOpenModalWindowSlice,
+        authSlice
     }
 })
 

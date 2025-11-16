@@ -1,6 +1,7 @@
 import SmartButton from './components/SmartButton/SmartButtonComponent.tsx'
 import { SmartButtonData } from './components/SmartButton/data/SmartButtonData.ts'
 import ModalWindow from './components/ModalWindow/ModalWindow.tsx'
+import LoginForm from './components/Auth/LoginForm.tsx'
 
 const App = () => {
 
@@ -11,6 +12,7 @@ const App = () => {
 
     <div className='absolute w-full h-full bg-[black]'> 
 
+    <LoginForm />
     
       <div className='relative'>
         <div className='absolute flex flex-col w-auto left-[1vw] top-[80px]'>
