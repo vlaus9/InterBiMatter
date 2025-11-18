@@ -2,19 +2,20 @@ import { Request, Response } from 'express'
 import User from '../../models/User'
 import type { IUser } from '../../models/User'
 import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose'
 
-interface RegisterBody {
+interface IRegisterBody {
     email: string,
     password: string,
     name: string
 }
 
-interface LoginBody {
+interface ILoginBody {
     email: string,
     password: string
 }
 
-interface AuthResponce {
+interface IAuthResponce {
     success: boolean,
     token: string,
     user: {
@@ -30,8 +31,8 @@ const generateToken = (userId: string): string => {
 }
 
 export const register = async (
-    req: Request<{}, {}, RegisterBody>,
-    res: Response<AuthResponce | { message: string }>
+    req: Request<{}, {}, IRegisterBody>,
+    res: Response<IAuthResponce | { message: string }>
 ): Promise<void> => {
     try { 
     const { email, password, name } = req.body
@@ -62,8 +63,8 @@ export const register = async (
 }
 
 export const login = async( 
-    req: Request<{}, {}, LoginBody>,
-    res: Response<AuthResponce | { message: string }>
+    req: Request<{}, {}, ILoginBody>,
+    res: Response<IAuthResponce | { message: string }>
 ): Promise<void> => {
     try {
         const { email, password } = req.body
@@ -93,7 +94,7 @@ export const login = async(
 
 export const getMe = async (
     req: Request,
-    res: Response<RegisterBody | { message: string }> //либо any, надо тестировать
+    res: Response<IRegisterBody | { message: string }> //либо any, надо тестировать
 ): Promise<void> => {
     try {
         const user: IUser | null = await User.findById(req.user?.id).select('-password')
@@ -105,7 +106,48 @@ export const getMe = async (
 
         res.json(user)
     } catch (error) {
-        console.error('Get me error', error)
+        console.error('Get me error ', error)
         res.status(500).json({ message: 'Server error' })
     }
+}
+
+export const deleteMe = async(
+    req: Request<{}, {}, { name: string }> ,
+    res: Response<{ message: string } | { success: boolean, message: string}>
+): Promise<void> => {
+    try {
+        const { name } = req.body
+
+        if (!name) {
+            res.status(401).json({ message: 'Not autorised' })
+        }
+
+        const deletedUser: IUser | null = await User.findOneAndDelete({ name })
+
+        if (!deletedUser) {
+            res.status(404).json({ message: 'User not found' })
+        }
+        res.status(200).json({ success: true, message: `Profile ${name} deleted`})
+
+    }
+    catch (error) {
+        console.error('Delete me error', error)
+        res.status(500).json({ message: 'Server error' })
+    }
+}
+
+export const collection = async(
+    req:Request<{}, {}, {}>, 
+    res: Response<any>
+): Promise<void> => {
+    try {
+        const collection = await mongoose.connection.db?.collection('users').find().toArray()
+
+        res.json(collection)
+    
+    }
+    catch (error) {
+        res.status(500).json({ message: `Error ${error}`})
+    }
+
 }

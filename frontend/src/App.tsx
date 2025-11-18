@@ -2,17 +2,22 @@ import SmartButton from './components/SmartButton/SmartButtonComponent.tsx'
 import { SmartButtonData } from './components/SmartButton/data/SmartButtonData.ts'
 import ModalWindow from './components/ModalWindow/ModalWindow.tsx'
 import LoginForm from './components/Auth/LoginForm.tsx'
+import Profile from './components/Profile/Profile.tsx'
+import { useAppSelector } from './app/hooks.ts'
+
 
 const App = () => {
 
-  
+  const { user } = useAppSelector((state) => state.authSlice)
 
+  console.log(user)
   return (
     <>
 
     <div className='absolute w-full h-full bg-[black]'> 
 
     <LoginForm />
+    <Profile />
     
       <div className='relative'>
         <div className='absolute flex flex-col w-auto left-[1vw] top-[80px]'>

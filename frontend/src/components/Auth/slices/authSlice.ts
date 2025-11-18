@@ -3,7 +3,8 @@ import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/tool
 export interface IUser {
     id: string,
     email: string,
-    password: string
+    password: string,
+    name: string
 }
 
 interface IAuthResponse {
@@ -28,7 +29,7 @@ const initialState: IAuthState = {
 
 export const registerUser = createAsyncThunk(
     'auth/register',
-    async(userData: { email: string, password: string, name: string}, { rejectWithValue }) => {
+    async(userData: { email: string; password: string; name: string }, { rejectWithValue }) => {
         try {
             const responce = await fetch('http://localhost:5000/api/auth/register', {
                 method: 'POST',
@@ -104,7 +105,8 @@ const authSlice = createSlice({
                 state.user = action.payload.user,
                 state.token = action.payload.token,
                 localStorage.setItem('token', action.payload.token),
-                state.error = null
+                state.error = null,
+                state.user.name = action.payload.user.name
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.loading = false,

@@ -10,8 +10,8 @@ const Profile: React.FC = () => {
     }
 
     return (
-        <div className={'w-[600px]'}>
-            <h2>Профиль</h2>
+        <div className={'w-[600px] h-[200px] bg-[blue]'}>
+            <h2 className={'text-[white]'}>Профиль</h2>
             {user ? (
                 <div className={'border p-[20px] rounded-[8px] bg-[#f9f9f9]'}>
                     <div>
