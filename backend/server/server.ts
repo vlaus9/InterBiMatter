@@ -12,17 +12,6 @@ const app: Application = express()
 app.use(cors())
 app.use(express.json())
 
-
-// const MONGODB_URL: string = process.env.MONGODB_URL || 'mongodb://localhost:27017/InterBiMatterDB'
-
-// mongoose.connect(MONGODB_URL)
-//     .then(() => console.log('MongoDB connectes successfully'))
-//     .catch((error: Error) => {
-//         console.error('MongoDB connected error:', error)
-//         // process.exit(1)
-// })
-
-
 let mongod: MongoMemoryServer
 
 const startServer = async() => {
@@ -35,10 +24,23 @@ const startServer = async() => {
         console.log('✅ MongoDB Memory Server connected successfully')
         console.log(`📊 Database URL: ${MONGODB_URL}`)
 
-        const PORT: number = parseInt(process.env.PORT || '5000', 10)
+        app.use('/api/auth', require('../middleware/routes/authRouter').default)
+
+        app.get('/', (req: Request, res: Response) => {
+            res.json({ message: 'Auth API is running'})
+        })
+
+        app.use((req: Request, res: Response) => {
+            res.status(404).json({ message: 'Route not found' })
+        })
+      
+
+        const PORT: number = parseInt(process.env.PORT || '80', 10)
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`)
             console.log(`🗄️  Database: MongoDB in Memory`)
+            console.log(`Server running on port ${PORT}`)
+            console.log(`API docsL http://localhost:${PORT}/api/auth`)
         })
     }
     catch (error) {
@@ -47,20 +49,3 @@ const startServer = async() => {
 }
 
 startServer()
-
-app.use('/api/auth', require('../middleware/routes/authRouter').default)
-
-app.get('/', (req: Request, res: Response) => {
-    res.json({ message: 'Auth API is running'})
-})
-
-app.use((req: Request, res: Response) => {
-    res.status(404).json({ message: 'Route not found' })
-})
-
-const PORT: number = parseInt(process.env.PORT || '5000', 10)
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-    console.log(`API docsL http://localhost:${PORT}/api/auth`)
-})

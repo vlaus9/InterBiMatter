@@ -27,11 +27,12 @@ const initialState: IAuthState = {
     error: null
 }
 
+
 export const registerUser = createAsyncThunk(
     'auth/register',
     async(userData: { email: string; password: string; name: string }, { rejectWithValue }) => {
         try {
-            const responce = await fetch('http://localhost:5000/api/auth/register', {
+            const responce = await fetch(`http://localhost:80/api/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -56,7 +57,7 @@ export const loginUser = createAsyncThunk(
     'auth/login',
     async(credentials: { email: string, password: string}, { rejectWithValue }) => {
         try {
-            const responce = await fetch('http://localhost:5000/api/auth/login', {
+            const responce = await fetch(`http://localhost:80/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json'
