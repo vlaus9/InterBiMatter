@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useAppSelector } from './app/hooks.ts'
 import SmartButton from './components/SmartButton/SmartButtonComponent.tsx'
 import { SmartButtonData } from './components/SmartButton/data/SmartButtonData.ts'
@@ -6,63 +7,60 @@ import LoginForm from './components/Auth/LoginForm.tsx'
 import Profile from './components/Profile/Profile.tsx'
 import RegisterForm from './components/Auth/RegisterForm.tsx'
 import { Routes, Route, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence, type Variants } from 'framer-motion'
-
+import { motion, AnimatePresence, type Variants, type Variant } from 'framer-motion'
+import { AnimateVariants } from './components/Auth/animate/animateVariants.ts'
 
 
 const App = () => {
 
   const location = useLocation()
+  const [ splash, setSplash ] = useState(true)
 
-  const pageVariants: Variants = {
-    initial: {
-      x: '100vw',
-      scale: 0.8,
-      rotateY: 90,
-      opacity: 0
-    },
-    in: {
-      x: 0,
-      scale: 1,
-      rotateY: 0,
-      opacity: 1,
-      transition: {
-        type: 'spring',
-        stiffness: 50,
-        damping: 20,
-        mass: 1.2,
-        restDelta: 0.001
-      }
-    },
-    out: {
-      x: '-100vw',
-    scale: 0.8,
-    rotateY: -90,
-    opacity: 0,
-    transition: {
-        type: 'spring',
-        stiffness: 50,
-        damping: 20,
-        mass: 1.2,
-        restDelta: 0.001
-      }
-    }
-  }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSplash(false)
+    }, 2500)
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  
 
   return (
     <>
 
     <div className='absolute w-full h-full bg-[black] overflow-hidden'> 
 
-
+    
       <AnimatePresence mode='wait'>
+          { splash ? (
+      
+            <motion.div
+              key='splash'
+              initial='initial'
+              animate='in'
+              exit='out'
+              variants={AnimateVariants.startSplashVariants}
+              className='fixed inset-0 flex items-center justify-center'
+              style={{backdropFilter: 'blur(20px)', background: 'rgba(0,0,0,7)'}}>
+              <motion.h1
+                  variants={AnimateVariants.startTextVariants}
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  className='text-[76px] text-[var(--text-primary)] whitespace-nowrap overflow-hidden'
+                  style={{ fontWeight: '700' }}>
+                  BiMatter
+                </motion.h1>
+            </motion.div>
+          ) : (
         <Routes location={location} key={location.pathname}>
           <Route path='/' element={
             <motion.div
               initial='initial'
               animate='in'
               exit='out'
-              variants={pageVariants}
+              variants={AnimateVariants.PageVariants}
               style={{
                 perspective: 1200,
                 transformStyle: 'preserve-3d',
@@ -79,7 +77,7 @@ const App = () => {
               initial='initial'
               animate='in'
               exit='out'
-              variants={pageVariants}
+              variants={AnimateVariants.PageVariants}
               style={{
                 perspective: 1200,
                 transformStyle: 'preserve-3d',
@@ -92,6 +90,7 @@ const App = () => {
           />
 
         </Routes>
+        )}
       </AnimatePresence>
     </div>  
       
