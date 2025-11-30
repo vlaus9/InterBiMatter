@@ -2,7 +2,10 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks"
 import { logOut } from "../Auth/slices/authSlice"
 
 const Profile: React.FC = () => {
-    const { user } = useAppSelector((state) => state.authSlice)
+    const { user, loading, isAuth, token } = useAppSelector((state) => state.authSlice)
+    console.log([user, isAuth, token])
+
+
     const dispatch = useAppDispatch()
 
     const handleLogOut = () => {

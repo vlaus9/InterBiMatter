@@ -6,11 +6,10 @@ import { useNavigate } from 'react-router'
 const LoginForm: React.FC = () => {
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
+    const { loading, error, isAuth } = useAppSelector((state) => state.authSlice)
     const dispatch = useAppDispatch()
-    const { loading, error } = useAppSelector((state) => state.authSlice)
-    
     const navigate = useNavigate()
-
+    
     useEffect(() => {
         return () => {
             dispatch(cleanError())
@@ -28,6 +27,13 @@ const LoginForm: React.FC = () => {
         dispatch(loginUser({ email, password }))
     }
 
+    const handleIsAuth = () => {
+        if(!loading) {
+            if (isAuth) {
+            navigate('/project')
+        }
+        }
+    }
 
 
     return (
@@ -55,7 +61,7 @@ const LoginForm: React.FC = () => {
                     <input id='password' type='password' autoComplete='current-password' value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} required className='w-[250px] p-[8px] border border-[black] rounded-[4px] outline-[var(--button-group-primary-bg)] text-[var(--text-primary)]'/>
                 </div>
 
-                <button type='submit' disabled={loading} className={`w-[250px] mb-[10px] p-[10px] ${loading ? 'bg-[#ccc] cursor-not-allowed' : 'bg-[var(--button-group-primary-bg)] cursor-pointer'} rounded-[4px] `}>
+                <button onClick={handleIsAuth} type='submit' disabled={loading} className={`w-[250px] mb-[10px] p-[10px] ${loading ? 'bg-[#ccc] cursor-not-allowed' : 'bg-[var(--button-group-primary-bg)] cursor-pointer'} rounded-[4px] `}>
                     {loading ? 'Входим...' : 'Войти'}
                 </button>
             </form>

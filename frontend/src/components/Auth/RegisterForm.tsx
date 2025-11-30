@@ -1,29 +1,43 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
 import { useState, useEffect } from "react"
 import { registerUser, cleanError } from "./slices/authSlice"
+import { useNavigate } from "react-router"
 
 
 const RegisterForm: React.FC = () => {
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [name, setName ] = useState<string>('')
+    const { loading, error, isAuth } = useAppSelector((state) => state.authSlice)
     const dispatch = useAppDispatch()
-    const { loading, error } = useAppSelector((state) => state.authSlice)
+    const navigate = useNavigate()
 
     useEffect(() => {
         dispatch(cleanError())
     }, [dispatch])
 
-    const handleSubmitRegister = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmitRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        if (!email || !password) {
+        try {
+            if (!email || !password) {
             dispatch(cleanError())
             return
         } 
 
-        dispatch(registerUser({ email, password, name }))
+        const result = await dispatch(registerUser({ email, password, name })).unwrap()
+
+        if (result) {
+            navigate('/project')
+        }
+        } catch (error) {
+            console.log('Register failed', error)
+        }
+        
+
+
     }
+
 
     return (
         <div className='flex items-center justify-center w-[100vw] h-[100vh] bg-[var(--bg-primary)]'>
@@ -56,7 +70,7 @@ const RegisterForm: React.FC = () => {
                     <input id='name' type='name' autoComplete='name' value={name} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)} required className='w-[250px] p-[8px] border border-[black] rounded-[4px] outline-[var(--button-group-primary-bg)] text-[var(--text-primary)]'/>
                 </div>
 
-                <button type='submit' disabled={loading} className={`w-[250px] mb-[10px] p-[10px] ${loading ? 'bg-[#ccc] cursor-not-allowed' : 'bg-[var(--button-group-primary-bg)] cursor-pointer'} rounded-[4px] `}>
+                <button  type='submit' disabled={loading} className={`w-[250px] mb-[10px] p-[10px] ${loading ? 'bg-[#ccc] cursor-not-allowed' : 'bg-[var(--button-group-primary-bg)] cursor-pointer'} rounded-[4px] `}>
                     {loading ? 'Регистрируем тебя...' : 'Зарегистрироваться'}
                 </button>
             </form>

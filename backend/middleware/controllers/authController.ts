@@ -27,7 +27,7 @@ interface IAuthResponce {
 
 
 const generateToken = (userId: string): string => {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET as string, { expiresIn: '30d'})
+    return jwt.sign({ id: userId }, process.env.JWT_SECRET as string, { expiresIn: '8h'})
 }
 
 export const register = async (

@@ -18,13 +18,15 @@ interface IAuthState {
     token: string | null,
     loading: boolean,
     error: string | null
+    isAuth: boolean
 }
 
 const initialState: IAuthState = {
     user: null,
     token: localStorage.getItem('token'),
     loading: false,
-    error: null
+    error: null,
+    isAuth: false
 }
 
 
@@ -86,13 +88,43 @@ const authSlice = createSlice({
             state.user = null,
             state.token = null,
             localStorage.removeItem('token'),
-            state.error = null
+            localStorage.removeItem('tokenExpiration')
+            state.error = null,
+            state.isAuth = false
         },
         cleanError: (state) => {
             state.error = null
         },
         setUser: (state, action: PayloadAction<IUser>) => {
             state.user = action.payload
+        },
+        checkAuth: (state) => {
+            const token = localStorage.getItem('token');
+            const expirationTime = localStorage.getItem('tokenExpiration')
+
+            if (token && expirationTime) { 
+                const isExpired = Date.now() > parseInt(expirationTime)
+
+                if(!isExpired) {
+                    state.token = token;
+                    state.isAuth = true;
+
+                    const userData = localStorage.getItem('user');
+                    if (userData) {
+                        state.user = JSON.parse(userData)
+                    }
+                } else {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('tokenExpiration');
+                    state.token = null;
+                    state.isAuth = false;
+                    state.user = null
+                }
+            } else {
+                state.token = null;
+                state.isAuth = false;
+                state.user = null
+            }
         }
     },
     extraReducers: (bulider) => {
@@ -102,12 +134,19 @@ const authSlice = createSlice({
                 state.error = null
             })
             .addCase(registerUser.fulfilled, (state, action: PayloadAction<IAuthResponse>) => {
-                state.loading = false,
-                state.user = action.payload.user,
-                state.token = action.payload.token,
-                localStorage.setItem('token', action.payload.token),
-                state.error = null,
-                state.user.name = action.payload.user.name
+                state.loading = false;
+                state.user = action.payload.user;
+                state.token = action.payload.token;
+
+                const expiresIn = 8 * 60 * 60 * 1000;
+                const expirationTime = Date.now() + expiresIn;
+
+                localStorage.setItem('token', action.payload.token);
+                localStorage.setItem('tokenExpiration', expirationTime.toString());
+
+                state.error = null;
+                state.user.name = action.payload.user.name;
+                state.isAuth = true
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.loading = false,
@@ -118,11 +157,18 @@ const authSlice = createSlice({
                 state.error = null
             })
             .addCase(loginUser.fulfilled, (state, action: PayloadAction<IAuthResponse>) => {
-                state.loading = false,
-                state.user = action.payload.user,
-                state.token = action.payload.token,
-                localStorage.setItem('token', action.payload.token),
-                state.error = null
+                state.loading = false;
+                state.user = action.payload.user;
+                state.token = action.payload.token;
+
+                const expiresIn = 8 * 60 * 60 * 1000;
+                const expirationTime = Date.now() + expiresIn;
+
+                localStorage.setItem('token', action.payload.token);
+                localStorage.setItem('tokenExpiration', expirationTime.toString());
+
+                state.error = null;
+                state.isAuth = true
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.loading = false,
@@ -131,6 +177,6 @@ const authSlice = createSlice({
     }
 })
 
-export const { logOut, cleanError, setUser } = authSlice.actions
+export const { logOut, cleanError, setUser, checkAuth } = authSlice.actions
 
 export default authSlice.reducer
