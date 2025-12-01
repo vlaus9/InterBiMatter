@@ -9,6 +9,7 @@ import RouteLoginForm from './components/Routes/RouteLoginForm.tsx'
 import RouteRegisterForm from './components/Routes/RouteRegisterForm.tsx'
 import RouteProject from './components/Routes/RouteProject.tsx'
 import RouteProfile from './components/Routes/RouteProfile.tsx'
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx'
 
 
 const App = () => {
@@ -42,10 +43,10 @@ const App = () => {
       <AnimatePresence mode='wait'>
           { splash ? (<Splash />) : (
         <Routes location={location} key={location.pathname}>
-          <Route path='/' element={!isAuth ? <RouteLoginForm/> : <RouteProject />}/>
+          <Route path='/login' element={<RouteLoginForm/>}/>
+          <Route path='/' element={<RouteProject />}/>
           <Route path='/register' element={<RouteRegisterForm />}/>
-          <Route path='/project' element={!isAuth ? <RouteLoginForm/> : <RouteProject />}/>
-          <Route path='/profile' element={!isAuth ? <RouteLoginForm/> : <RouteProfile />}/>
+          <Route path='/profile' element={<RouteProfile />}/>
         </Routes>
         )
         

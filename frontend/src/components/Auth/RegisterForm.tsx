@@ -8,7 +8,7 @@ const RegisterForm: React.FC = () => {
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [name, setName ] = useState<string>('')
-    const { loading, error, isAuth } = useAppSelector((state) => state.authSlice)
+    const { loading, error } = useAppSelector((state) => state.authSlice)
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
 

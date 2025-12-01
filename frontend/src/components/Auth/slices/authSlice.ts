@@ -88,7 +88,8 @@ const authSlice = createSlice({
             state.user = null,
             state.token = null,
             localStorage.removeItem('token'),
-            localStorage.removeItem('tokenExpiration')
+            localStorage.removeItem('tokenExpiration'),
+            localStorage.removeItem('user'),
             state.error = null,
             state.isAuth = false
         },
@@ -116,6 +117,7 @@ const authSlice = createSlice({
                 } else {
                     localStorage.removeItem('token');
                     localStorage.removeItem('tokenExpiration');
+                    localStorage.removeItem('user');
                     state.token = null;
                     state.isAuth = false;
                     state.user = null
@@ -143,6 +145,7 @@ const authSlice = createSlice({
 
                 localStorage.setItem('token', action.payload.token);
                 localStorage.setItem('tokenExpiration', expirationTime.toString());
+                localStorage.setItem('user',JSON.stringify(action.payload.user));
 
                 state.error = null;
                 state.user.name = action.payload.user.name;
@@ -166,6 +169,7 @@ const authSlice = createSlice({
 
                 localStorage.setItem('token', action.payload.token);
                 localStorage.setItem('tokenExpiration', expirationTime.toString());
+                localStorage.setItem('user',JSON.stringify(action.payload.user));
 
                 state.error = null;
                 state.isAuth = true

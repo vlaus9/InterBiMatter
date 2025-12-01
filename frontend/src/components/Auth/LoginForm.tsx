@@ -9,30 +9,32 @@ const LoginForm: React.FC = () => {
     const { loading, error, isAuth } = useAppSelector((state) => state.authSlice)
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
-    
+
     useEffect(() => {
         return () => {
             dispatch(cleanError())
         }
     }, [dispatch])
 
-    const handleSubmitLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmitLogin =  async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        if (!email || !password) {
+        try {
+        
+            if (!email || !password) {
             dispatch(cleanError())
             return
         } 
 
-        dispatch(loginUser({ email, password }))
-    }
+        const result = await dispatch(loginUser({ email, password })).unwrap()
 
-    const handleIsAuth = () => {
-        if(!loading) {
-            if (isAuth) {
-            navigate('/project')
+        if (result) {
+            navigate('/')
         }
+        } catch (error) {
+            console.log('Login failed', error)
         }
+        
     }
 
 
@@ -61,7 +63,7 @@ const LoginForm: React.FC = () => {
                     <input id='password' type='password' autoComplete='current-password' value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} required className='w-[250px] p-[8px] border border-[black] rounded-[4px] outline-[var(--button-group-primary-bg)] text-[var(--text-primary)]'/>
                 </div>
 
-                <button onClick={handleIsAuth} type='submit' disabled={loading} className={`w-[250px] mb-[10px] p-[10px] ${loading ? 'bg-[#ccc] cursor-not-allowed' : 'bg-[var(--button-group-primary-bg)] cursor-pointer'} rounded-[4px] `}>
+                <button type='submit' disabled={loading} className={`w-[250px] mb-[10px] p-[10px] ${loading ? 'bg-[#ccc] cursor-not-allowed' : 'bg-[var(--button-group-primary-bg)] cursor-pointer'} rounded-[4px] `}>
                     {loading ? 'Входим...' : 'Войти'}
                 </button>
             </form>

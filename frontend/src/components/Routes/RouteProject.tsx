@@ -3,10 +3,12 @@ import { AnimateVariants } from "../Auth/animate/AnimateVariants"
 import { SmartButtonData } from "../SmartButton/data/SmartButtonData"
 import ModalWindow from "../ModalWindow/ModalWindow"
 import SmartButton from "../SmartButton/SmartButtonComponent"
+import ProtectedRoute from "../ProtectedRoute/ProtectedRoute"
 
 
 const RouteProject: React.FC = () => {
     return (
+    <ProtectedRoute>
         <motion.div
             initial='initial'
             animate='in'
@@ -36,6 +38,7 @@ const RouteProject: React.FC = () => {
 
                 <ModalWindow />
         </motion.div>
+    </ProtectedRoute>
     )
 }
 
