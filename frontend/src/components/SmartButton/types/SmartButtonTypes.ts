@@ -9,8 +9,10 @@ export interface ISmartButton {
     icon: React.ComponentType<IIconSmartButton>
     iconProps?: IIconSmartButton
     contentType: string
-    contentData: IModalWindow
-    clickAction: React.ComponentType<IModalWindowProps>
+    contentData?: IModalWindow
+    clickAction?: React.ComponentType<IModalWindowProps>
+    side: string,
+    navigate?: string
 }
 
 //Тип для массива кнопок

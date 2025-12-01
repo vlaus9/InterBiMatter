@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
 import { AnimateVariants } from "../Auth/animate/AnimateVariants"
-import { SmartButtonData } from "../SmartButton/data/SmartButtonData"
+import { SmartButtonDataAttribut, SmartButtonDataProfile } from "../SmartButton/data/SmartButtonData"
 import ModalWindow from "../ModalWindow/ModalWindow"
 import SmartButton from "../SmartButton/SmartButtonComponent"
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute"
@@ -26,14 +26,19 @@ const RouteProject: React.FC = () => {
                   <div className='absolute rounded-[20px] top-[0] w-[70px] bg-[var(--button-group-primary-bg)] h-full shadow-[0_0_0_2px_#878585d6]'> 
                   </div>
 
-                  {SmartButtonData.map((el) => {
+                  {SmartButtonDataAttribut.map((el) => {
                     return (
                             <div key={el.id}>
                             <SmartButton config={el}/>
                             </div>
                             )
-                  })}
-                  
+                  })}                  
+                </div>
+
+                <div className='absolute w-auto right-[1vw] top-[80px]'>
+                    <div className='absolute rounded-[20px] right-[0] top-[0] w-[70px] bg-[var(--button-group-primary-bg)] h-full shadow-[0_0_0_2px_#878585d6]'> 
+                    </div>
+                    <SmartButton config={SmartButtonDataProfile[0]} />
                 </div>
 
                 <ModalWindow />

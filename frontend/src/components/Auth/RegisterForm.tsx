@@ -28,7 +28,7 @@ const RegisterForm: React.FC = () => {
         const result = await dispatch(registerUser({ email, password, name })).unwrap()
 
         if (result) {
-            navigate('/project')
+            navigate('/')
         }
         } catch (error) {
             console.log('Register failed', error)
