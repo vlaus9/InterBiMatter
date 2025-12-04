@@ -30,7 +30,7 @@ const Profile: React.FC = () => {
             </div>
 
             <div className='w-[80%] mt-[40px] mb-[20px] flex justify-end'>
-                <button onClick={handleLogOut} className='w-[200px] p-[10px] bg-[var(--button-group-primary-bg)] cursor-pointer rounded-[5px] border-[2px] border-[#808080ff]'>
+                <button onClick={handleLogOut} className='w-[200px] p-[10px] bg-[var(--button-group-primary-bg)] cursor-pointer rounded-[5px] border-[2px] border-[#808080ff] transition-all hover:scale-[1.03]'>
                             Выйти
                 </button>
             </div>
