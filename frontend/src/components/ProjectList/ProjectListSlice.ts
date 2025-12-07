@@ -5,13 +5,15 @@ interface IProjectList {
     name: string
     creationDate: Date | null
     autor: string
+    modelPath: string
 }
 
 const initialState: IProjectList = {
     id: null,
     name: '',
     creationDate: null,
-    autor: ''
+    autor: '',
+    modelPath: ''
 }
 
 const projectList = createSlice({ 
