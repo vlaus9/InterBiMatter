@@ -9,7 +9,7 @@ import RouteLoginForm from './components/Routes/RouteLoginForm.tsx'
 import RouteRegisterForm from './components/Routes/RouteRegisterForm.tsx'
 import RouteProject from './components/Routes/RouteProject.tsx'
 import RouteProfile from './components/Routes/RouteProfile.tsx'
-import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx'
+import CreateProjectForm from './components/CreateProjectForm/CreateProjectForm.tsx'
 
 
 const App = () => {
@@ -54,6 +54,8 @@ const App = () => {
       </AnimatePresence>
     </div>  
       
+    <CreateProjectForm />
+
     </>
   )
 }

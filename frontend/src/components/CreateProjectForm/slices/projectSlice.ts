@@ -31,7 +31,7 @@ const initialState: IProjectState = {
     isActive: false
 }
 
-export const CreateProject = createAsyncThunk(
+export const createProject = createAsyncThunk(
     'project/createProject',
     async(credentials: { name: string, autor: string, modelPath: string }, { rejectWithValue }) => {
         try {
@@ -56,7 +56,7 @@ export const CreateProject = createAsyncThunk(
     } 
 )
 
-export const OpenProject = createAsyncThunk(
+export const openProject = createAsyncThunk(
     'project/getProject',
     async(projectId: string, { rejectWithValue }) => {
         try {
@@ -103,31 +103,31 @@ const projectSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(CreateProject.pending, (state) => {
+            .addCase(createProject.pending, (state) => {
                 state.loading = true;
                 state.error = null
             })
-            .addCase(CreateProject.fulfilled, (state, action: PayloadAction<IProject>) => {
+            .addCase(createProject.fulfilled, (state, action: PayloadAction<IProject>) => {
                 state.loading = false;
                 state.isActive = true;
                 state.project = action.payload;
                 state.error = null
             })
-            .addCase(CreateProject.rejected, (state, action) => {
+            .addCase(createProject.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string
             })
-            .addCase(OpenProject.pending, (state) => {
+            .addCase(openProject.pending, (state) => {
                 state.loading = true;
                 state.error = null
             })
-            .addCase(OpenProject.fulfilled, (state, action: PayloadAction<IProjectResponse>) => {
+            .addCase(openProject.fulfilled, (state, action: PayloadAction<IProjectResponse>) => {
                 state.loading = false;
                 state.project = action.payload.data.project
                 state.isActive = true;
                 state.error = null
             })
-            .addCase(OpenProject.rejected, (state, action) => {
+            .addCase(openProject.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string
             })
