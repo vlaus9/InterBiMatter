@@ -24,7 +24,7 @@ export const getProjectById = async (req: Request, res: Response) => {
 
         if (!project) {
             return res.status(404).json({
-                status: 'sail',
+                status: 'fail',
                 message: 'Проекты не найдены'
             })
         }
@@ -55,7 +55,7 @@ export const createProject = async (req: Request, res: Response) => {
         name: req.body.name,
         creationDate: Date.now(),
         autor: req.body.autor,
-        modelPath: req.file.filename
+        modelPath: req.file.filename,
     })
 
     res.status(201).json({
