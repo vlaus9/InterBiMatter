@@ -50,7 +50,7 @@ const LoginForm: React.FC = () => {
                 )}
 
                 <div className='mb-[5px]'>
-                    <label htmlFor='email' className={'block mb-[10px] mt-[10px] text-[var(--text-primary)]'}>
+                    <label htmlFor='email' className='block mb-[10px] mt-[10px] text-[var(--text-primary)]'>
                         Почта:
                     </label>
                     <input id='email' type='email' autoComplete='email' value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} required className='w-[250px] p-[8px] border border-[black] rounded-[4px] outline-[var(--button-group-primary-bg)] text-[var(--text-primary)]' />
