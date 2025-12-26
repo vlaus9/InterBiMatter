@@ -47,7 +47,7 @@ export const createProject = createAsyncThunk(
 
             return response.data
         } catch (error: any) {
-            const errorMessage = error.responce.data.message
+            const errorMessage = error.response.data.message
                 || error.message
                 || 'Ошибка создания проекта'
             
