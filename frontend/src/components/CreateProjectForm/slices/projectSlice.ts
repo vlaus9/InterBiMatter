@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import axios from "axios"
 
-interface IProject {
-    id: number | null
+export interface IProject {
+    id: string | null
     name: string
     creationDate: Date | null
     autor: string
@@ -16,12 +16,12 @@ interface IProjectState {
     isActive: boolean
 }
 
-interface IProjectResponse {
+export interface IProjectResponse {
     status: 'success' | 'error'
     data: { 
         project: IProject 
     }
-message?: string
+    message?: string
 }
 
 const initialState: IProjectState = {
@@ -33,11 +33,14 @@ const initialState: IProjectState = {
 
 export const createProject = createAsyncThunk(
     'project/createProject',
-    async(credentials: { name: string, autor: string, modelPath: string }, { rejectWithValue }) => {
+    async(formData: FormData, { rejectWithValue }) => {
         try {
-            const response = await axios.post<IProject>(
+            const response = await axios.post<{
+                status: string
+                data: { project: IProject }
+            }>(
                 `http://localhost:80/api/project/createProject`, 
-                credentials, 
+                formData, 
                 { 
                     headers: { 
                         'Content-type': 'multipart/form-data'
@@ -45,7 +48,7 @@ export const createProject = createAsyncThunk(
                 }
             )
 
-            return response.data
+            return response.data.data.project
         } catch (error: any) {
             const errorMessage = error.response.data.message
                 || error.message
@@ -56,24 +59,24 @@ export const createProject = createAsyncThunk(
     } 
 )
 
-export const openProject = createAsyncThunk(
-    'project/getProject',
-    async(projectId: string, { rejectWithValue }) => {
-        try {
-            const project = await axios.get<IProjectResponse>(
-                `http://localhost:80/api/project/getProject/${projectId}`,
-            )
+// export const openProject = createAsyncThunk(
+//     'project/getProject',
+//     async(projectId: string, { rejectWithValue }) => {
+//         try {
+//             const project = await axios.get<IProjectResponse>(
+//                 `http://localhost:80/api/project/getProject/${projectId}`,
+//             )
 
-            return project.data
-        } catch (error: any) {
-            const errorMessage = error.response.data.message
-             || error.message
-             || 'Ошибка получения данных проекта'
+//             return project.data
+//         } catch (error: any) {
+//             const errorMessage = error.response.data.message
+//              || error.message
+//              || 'Ошибка получения данных проекта'
 
-             return rejectWithValue(errorMessage)
-        }
-    }
-)
+//              return rejectWithValue(errorMessage)
+//         }
+//     }
+// )
 
 const projectSlice = createSlice({
     name: 'project',
@@ -117,20 +120,20 @@ const projectSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload as string
             })
-            .addCase(openProject.pending, (state) => {
-                state.loading = true;
-                state.error = null
-            })
-            .addCase(openProject.fulfilled, (state, action: PayloadAction<IProjectResponse>) => {
-                state.loading = false;
-                state.project = action.payload.data.project
-                state.isActive = true;
-                state.error = null
-            })
-            .addCase(openProject.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload as string
-            })
+            // .addCase(openProject.pending, (state) => {
+            //     state.loading = true;
+            //     state.error = null
+            // })
+            // .addCase(openProject.fulfilled, (state, action: PayloadAction<IProjectResponse>) => {
+            //     state.loading = false;
+            //     state.project = action.payload.data.project
+            //     state.isActive = true;
+            //     state.error = null
+            // })
+            // .addCase(openProject.rejected, (state, action) => {
+            //     state.loading = false;
+            //     state.error = action.payload as string
+            // })
     }
 }
 )

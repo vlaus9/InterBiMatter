@@ -25,8 +25,8 @@ const storage = multer.diskStorage({
 const fileFilter = (req: any, file: any, cb: any) => {
     if (file.mimetype === 'model/gltf+json' ||
         file.mimetype === 'model/gltf-binary' ||
-        file.originalname.endsWith('.gtlf') ||
-        file.originalname.endsWith('.gbl')) {
+        file.originalname.endsWith('.gltf') ||
+        file.originalname.endsWith('.glb')) {
             cb(null, true)
     } else {
         cb(new Error('Допускаются только файлы форматов GTLF и GBL!'), false)

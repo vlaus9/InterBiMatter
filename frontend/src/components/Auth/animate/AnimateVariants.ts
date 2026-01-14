@@ -82,5 +82,24 @@ export const AnimateVariants = {
             ease: "easeIn"
             }
         }
+        },
+    createProjectFormVariant: {
+        initial: {
+            opacity: 0
+        },
+        in: {
+            opacity: 1, 
+            transition: { 
+                ease: 'easeInOut', 
+                duration: 0.5
+            }
+        },
+        out: {
+            opacity: 0, 
+            transition: { 
+                ease: 'easeInOut', 
+                duration: 0.5
+            }
         }
+    }
 } as const

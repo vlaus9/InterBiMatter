@@ -47,6 +47,7 @@ const App = () => {
           <Route path='/' element={<RouteProject />}/>
           <Route path='/register' element={<RouteRegisterForm />}/>
           <Route path='/profile' element={<RouteProfile />}/>
+          {/* <Route path='/createProject' element={<CreateProjectForm />}/> */}
         </Routes>
         )
         
@@ -54,7 +55,7 @@ const App = () => {
       </AnimatePresence>
     </div>  
       
-    <CreateProjectForm />
+    {/* <CreateProjectForm /> */}
 
     </>
   )

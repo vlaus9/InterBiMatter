@@ -4,7 +4,10 @@ import mongoose from 'mongoose'
 
 export const getProjectAll = async (req: Request, res: Response) => {
     try {
-        const projects = await Project.find().sort({ createdAt: -1 })
+        
+        const { user } = req.query
+
+        const projects = await Project.find({ autor: user }).sort({ createdAt: -1 })
         res.status(200).json({
             status: 'success',
             result: projects.length,
@@ -51,7 +54,7 @@ export const createProject = async (req: Request, res: Response) => {
     }
 
     const newProject = await Project.create({
-        id: new mongoose.Types.ObjectId(),
+        id: new mongoose.Types.ObjectId().toString(),
         name: req.body.name,
         creationDate: Date.now(),
         autor: req.body.autor,

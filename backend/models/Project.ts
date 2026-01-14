@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from "mongoose"
 
 
 export interface IProject extends Document {
-    id: number
+    id: string
     name: string
     creationDate: Date 
     autor: string
@@ -12,7 +12,7 @@ export interface IProject extends Document {
 const projectSchema: Schema<IProject> = new Schema(
     {
         id: {
-            type: Number,
+            type: String,
             required: true,
         },
         name: {
