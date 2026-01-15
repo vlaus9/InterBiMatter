@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import path from 'path'
 import Project from '../../models/Project'
 import mongoose from 'mongoose'
 
@@ -8,6 +9,12 @@ export const getProjectAll = async (req: Request, res: Response) => {
         const { user } = req.query
 
         const projects = await Project.find({ autor: user }).sort({ createdAt: -1 })
+
+        const projectsWithUrls = projects.map(project => ({
+            ...project.toObject(),
+            modelUrl: `${req.protocol}://${req.get('host')}/uploads/${path.basename(project.modelPath)}`
+        }))
+
         res.status(200).json({
             status: 'success',
             result: projects.length,
@@ -32,9 +39,14 @@ export const getProjectById = async (req: Request, res: Response) => {
             })
         }
 
+        const projectWithUrl = {
+            ...project.toObject(),
+            modelUrl: `${req.protocol}://${req.get('host')}/uploads/${path.basename(project.modelPath)}`
+        }
+
         return res.status(200).json({
             status: 'success',
-            data: { project }
+            data: { project: projectWithUrl }
         })
     } catch (error) {
         res.status(500).json({
@@ -61,9 +73,18 @@ export const createProject = async (req: Request, res: Response) => {
         modelPath: req.file.filename,
     })
 
+    const responseData = {
+        id: newProject.id.toString(),
+        name: newProject.name,
+        creationDate: newProject.creationDate,
+        autor: newProject.autor,
+        modelPath: newProject.modelPath,
+        modelUrl: `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
+    }
+
     res.status(201).json({
         status: 'success',
-        data: { project: newProject }
+        data: { project: responseData }
     })
  } catch (error: any) {
     res.status(400).json({

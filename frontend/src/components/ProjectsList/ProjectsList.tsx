@@ -1,12 +1,19 @@
-import { useEffect } from "react";
-import { getProjectsAll } from "./slice/ProjectsListSlice";
-import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { useEffect } from "react"
+import { getProjectsAll } from "./slice/ProjectsListSlice"
+import { useAppSelector, useAppDispatch } from "../../app/hooks"
+import { useNavigate } from "react-router"
 
 const ProjectsList: React.FC = () => {
 
     const user = useAppSelector((state) => state.authSlice.user?.name)
     const projectList = useAppSelector((state) => state.projectList)
     const dispatch = useAppDispatch()
+    const navigate = useNavigate()
+
+    const openProject = (id: string) => {
+        console.log(id)
+        navigate('/')
+    }
 
     if (user) {
         useEffect(() => {
@@ -29,7 +36,7 @@ if (projectList && projectList.projects) {
         {
             projectList.projects.map((project) => {
                 return (
-                <div key={project.id} className='w-full grid grid-cols-5 text-center divide-x-2 divide-solid cursor-pointer border border-[var(--button-group-primary-bg)] rounded-[10px] hover:border-[var(--bg-secondary)] mb-[5px]'>
+                <div onClick={() => openProject(project.id as string)} key={project.id} className='w-full grid grid-cols-5 text-center divide-x-2 divide-solid cursor-pointer border border-[var(--button-group-primary-bg)] rounded-[10px] hover:border-[var(--bg-secondary)] mb-[5px]'>
                     <h3 className=''>{`${project.name}`}</h3>
                     <h3 className=''>{`${project.autor}`}</h3>
                     <h3 className=' col-span-3'>{`${project.modelPath}`}</h3>

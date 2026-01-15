@@ -11,8 +11,8 @@ const CreateProjectForm: React.FC = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const [fileName, setFileName] = useState<string>('')
     const dispatch = useAppDispatch()
-    // const user = useAppSelector((state) => state.authSlice)
-    // const userName = user.user?.name
+    const user = useAppSelector((state) => state.authSlice)
+    const userName = user.user?.name
     const navigate = useNavigate()
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,14 +28,14 @@ const CreateProjectForm: React.FC = () => {
 
         try {
 
-            if (!nameProject || !selectedFile) {
+            if (!nameProject || !selectedFile || !userName) {
                 dispatch(cleanError())
                 return
             }
 
             const formData = new FormData()
             formData.append('name', nameProject)
-            formData.append('autor', 'test')
+            formData.append('autor', userName)
             formData.append('modelFile', selectedFile)
 
         const result = await dispatch(createProject(formData)).unwrap()

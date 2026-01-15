@@ -42,7 +42,6 @@ const startServer = async() => {
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`)
             console.log(`🗄️  Database: MongoDB in Memory`)
-            console.log(`API docsL http://localhost:${PORT}/api/auth`)
         })
     }
     catch (error) {

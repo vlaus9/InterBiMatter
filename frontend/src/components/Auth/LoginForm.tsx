@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router'
 const LoginForm: React.FC = () => {
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
-    const { loading, error, isAuth } = useAppSelector((state) => state.authSlice)
+    const { loading, error } = useAppSelector((state) => state.authSlice)
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
 
