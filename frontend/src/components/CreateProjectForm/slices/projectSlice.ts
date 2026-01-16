@@ -7,6 +7,7 @@ export interface IProject {
     creationDate: Date | null
     autor: string
     modelPath: string
+    modelUrl: string
 }
 
 interface IProjectState {
@@ -37,7 +38,7 @@ export const createProject = createAsyncThunk(
         try {
             const response = await axios.post<{
                 status: string
-                data: { project: IProject }
+                data: { project: IProject}
             }>(
                 `http://localhost:80/api/project/createProject`, 
                 formData, 

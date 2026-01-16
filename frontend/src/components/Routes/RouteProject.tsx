@@ -1,12 +1,24 @@
 import { motion } from "framer-motion"
 import { AnimateVariants } from "../Auth/animate/AnimateVariants"
 import { SmartButtonDataAttribut, SmartButtonDataProfile } from "../SmartButton/data/SmartButtonData"
+import { useAppSelector } from "../../app/hooks"
+import ModelViewer from "../ModelViewer/ModelViewer"
 import ModalWindow from "../ModalWindow/ModalWindow"
 import SmartButton from "../SmartButton/SmartButtonComponent"
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute"
 
 
 const RouteProject: React.FC = () => {
+
+    const project = useAppSelector((state) => state.projectSlice.project)
+
+    // if (!project) {
+    //    return <div>Проект отсутствует</div> 
+    // }
+    
+    const modelUrl = project?.modelUrl
+    console.log(modelUrl)
+
     return (
     <ProtectedRoute>
         <motion.div
@@ -21,6 +33,9 @@ const RouteProject: React.FC = () => {
                 height: '100%'
             }}
             className='relative'>
+
+                <ModelViewer/>
+
                 <div className='absolute flex flex-col w-auto left-[1vw] top-[80px]'>
 
                   <div className='absolute rounded-[20px] top-[0] w-[70px] bg-[var(--button-group-primary-bg)] h-full shadow-[0_0_0_2px_#878585d6]'> 
