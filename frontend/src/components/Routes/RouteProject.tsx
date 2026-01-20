@@ -34,7 +34,7 @@ const RouteProject: React.FC = () => {
             }}
             className='relative'>
 
-                <ModelViewer/>
+                <ModelViewer modelUrl="http://localhost/uploads/2CylinderEngine.gltf"/>
 
                 <div className='absolute flex flex-col w-auto left-[1vw] top-[80px]'>
 
