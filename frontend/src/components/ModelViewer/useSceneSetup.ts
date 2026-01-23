@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import * as THREE from 'three'
+import * as THREE from "three"
 
 const useSceneSetup = (
     scene: THREE.Scene | null
@@ -15,7 +15,7 @@ const useSceneSetup = (
         directionalLight.position.set(10, 10, 10)
         scene.add(directionalLight)
 
-        const gridHelper = new THREE.GridHelper(20, 20, 0x444444, 0x222222)
+        const gridHelper = new THREE.GridHelper(20, 20, 0x929292, 0xb1b1b1)
         scene.add(gridHelper)
 
         const axesHelper = new THREE.AxesHelper(5)

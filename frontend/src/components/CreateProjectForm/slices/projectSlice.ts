@@ -1,13 +1,19 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import axios from "axios"
 
+interface IOrganizedFiles {
+    name: string
+    type: string
+    path: string
+}
+
 export interface IProject {
     id: string | null
     name: string
     creationDate: Date | null
     autor: string
     modelPath: string
-    modelUrl: string
+    files: IOrganizedFiles
 }
 
 interface IProjectState {

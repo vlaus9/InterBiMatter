@@ -4,6 +4,7 @@ import useCamera from "./useCamera"
 import useAnimation from "./useAnimation"
 import useModelLoader from "./useModelLoader"
 import useSceneSetup from "./useSceneSetup"
+import useResize from "./useResize"
 
 interface IModelViewerProps {
     modelUrl: string,
@@ -21,6 +22,7 @@ const ModelViewer: React.FC<IModelViewerProps> = ({
     const { camera, controls } = useCamera(containerRef, renderer, isReady)
 
     useSceneSetup(scene)
+    useResize(containerRef, camera, renderer)
 
     const isAllReady = scene && camera && renderer && controls
     useAnimation(

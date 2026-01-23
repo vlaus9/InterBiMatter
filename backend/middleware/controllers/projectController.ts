@@ -1,7 +1,15 @@
 import { Request, Response } from 'express'
+import { organizeProjectFiles, convertToGLB } from '../upload'
 import path from 'path'
 import Project from '../../models/Project'
-import mongoose from 'mongoose'
+
+declare global {
+    namespace Express {
+        interface Request {
+            projectId?: string
+        }
+    }
+}
 
 export const getProjectAll = async (req: Request, res: Response) => {
     try {
@@ -65,12 +73,46 @@ export const createProject = async (req: Request, res: Response) => {
         })
     }
 
+    const files = req.files as Express.Multer.File[]
+
+    const projectId = req.projectId || `project_${Date.now()}`
+
+    const { projectDir, organizedFiles, mainGltfFile} = await organizeProjectFiles(files, projectId)
+
+    let glbPath: string | null = null
+     
+    if (mainGltfFile) {
+        try {
+            glbPath = await convertToGLB(mainGltfFile, projectDir)
+        } catch (conversionError) {
+            console.warn('Конвертация не удалась, используем оригинал:', conversionError)
+        }
+    }
+
+    let modelUrl = ''
+
+    if (glbPath) {
+        modelUrl = `/uploads/${projectId}/model.glb`
+    } else if (mainGltfFile) {
+        modelUrl = `/uploads/${projectId}/original/${path.basename(mainGltfFile)}`
+    } else {
+        const modelFile = organizedFiles.find(f => f.type === 'model')
+        if (modelFile) {
+            modelUrl = `/uploads/${projectId}/original/${modelFile.originalName}`
+        }
+    }
+
     const newProject = await Project.create({
-        id: new mongoose.Types.ObjectId().toString(),
+        id: projectId,
         name: req.body.name,
         creationDate: Date.now(),
         autor: req.body.autor,
-        modelPath: req.file.filename,
+        modelPath: modelUrl,
+        files: organizedFiles.map(f => ({
+            name: f.originalName,
+            type: f.type,
+            path: f.path.replace(/^.*uploads[\\/]/, '')
+        }))
     })
 
     const responseData = {
@@ -79,20 +121,22 @@ export const createProject = async (req: Request, res: Response) => {
         creationDate: newProject.creationDate,
         autor: newProject.autor,
         modelPath: newProject.modelPath,
-        modelUrl: `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
+        files: newProject.files
     }
 
     res.status(201).json({
         status: 'success',
         data: { project: responseData }
     })
- } catch (error: any) {
-    res.status(400).json({
-        status: 'error',
-        message: error.message || 'Ошибка при создании проекта'
-    })
- }}
-
+    }
+    catch (error: any) {
+        console.error('Ошибка создания проекта:', error)
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Ошибка при создании проекта'
+        })
+    }
+}
 
  export const deleteProject = async (req: Request, res: Response) => {
     try {

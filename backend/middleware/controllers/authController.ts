@@ -93,7 +93,7 @@ export const login = async(
 }
 
 export const getMe = async (
-    req: Request,
+    req: Request & { user?: { id: string }},
     res: Response<IRegisterBody | { message: string }> //либо any, надо тестировать
 ): Promise<void> => {
     try {
