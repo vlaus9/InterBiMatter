@@ -123,14 +123,14 @@ export const organizeProjectFiles = async (
             if (ext === '.gltf') mainGltfFile = destination
         }
         else if (ext === 'bin') {
-            destination = path.join(projectDir, 'orifinal', file.originalname)
+            destination = path.join(projectDir, 'original', file.originalname)
             fileType = 'binary'
         }
-        else if (['.jpg', '.jpeg', ',png'].includes(ext)) {
+        else if (['.jpg', '.jpeg', '.png'].includes(ext)) {
             destination = path.join(projectDir, 'textures', file.originalname)
             fileType = 'texture'
         }
-        else if (ext === '.mlt') {
+        else if (ext === '.mtl') {
             destination = path.join(projectDir, 'materials', file.originalname)
             fileType = 'material'
         }

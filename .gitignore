@@ -20,6 +20,10 @@ build/
 
 uploads/
 
+temp/
+*.tmp
+*.temp
+
 .cache
 .parcel-cache
 

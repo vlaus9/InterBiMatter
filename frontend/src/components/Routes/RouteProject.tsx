@@ -16,7 +16,7 @@ const RouteProject: React.FC = () => {
     //    return <div>Проект отсутствует</div> 
     // }
     
-    const modelUrl = project?.modelUrl
+    const modelUrl = project?.modelPath
     console.log(modelUrl)
 
     return (
@@ -34,7 +34,7 @@ const RouteProject: React.FC = () => {
             }}
             className='relative'>
 
-                <ModelViewer modelUrl="http://localhost/uploads/2CylinderEngine.gltf"/>
+                <ModelViewer modelUrl={modelUrl as string}/>
 
                 <div className='absolute flex flex-col w-auto left-[1vw] top-[80px]'>
 

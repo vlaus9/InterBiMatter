@@ -66,7 +66,7 @@ export const getProjectById = async (req: Request, res: Response) => {
 
 export const createProject = async (req: Request, res: Response) => {
  try {
-    if (!req.file) {
+    if (!req.files || req.files.length === 0) {
         return res.status(400).json({
             status: 'fail',
             message: 'Файл модели обязателен'
@@ -134,6 +134,61 @@ export const createProject = async (req: Request, res: Response) => {
         res.status(500).json({
             success: false,
             message: error.message || 'Ошибка при создании проекта'
+        })
+    }
+}
+
+export const addFiles = async (req: Request, res: Response) => {
+    try {
+        const projectId = req.params.projectId
+        const files = req.files as Express.Multer.File[]
+        const { organizedFiles, mainGltfFile } = await organizeProjectFiles(files, projectId)
+
+        const filesToAdd = organizedFiles.map(file => ({
+            name: file.originalName,
+            type: file.type,
+            path: file.path.replace(/^.*uploads[\\/]/, '')
+        }))
+
+        const updateData: any = {
+            $push: {
+                files: { $each: filesToAdd}
+            },
+            $set: {
+                updateAt: new Date()
+            }
+        }
+
+        if (mainGltfFile && typeof mainGltfFile === 'string') {
+            updateData.$set.mainGltfFile = mainGltfFile.replace(/^.*uploads[\\/]/, '')
+        }
+
+        const result = await Project.updateOne(
+            { id: projectId },
+            updateData
+        )
+
+        if (result.matchedCount === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Проект не найден'
+            })
+        }
+
+        res.json({
+            success: true,
+            message: 'Файлы успешно загружены',
+            files: organizedFiles,
+            matchedCount: result.matchedCount,
+            modifiedCount: result.modifiedCount
+        })
+    }
+    catch (error) {
+        console.error('Ошибка загрузки файлов:', error)
+        res.status(500).json({
+            success: false,
+            message: 'ошибка загрузки файлов',
+            error: error instanceof Error ? error.message : 'Неизвестная ошибка'
         })
     }
 }
