@@ -81,13 +81,20 @@ export const createProject = async (req: Request, res: Response) => {
 
     let glbPath: string | null = null
      
-    if (mainGltfFile) {
-        try {
-            glbPath = await convertToGLB(mainGltfFile, projectDir)
-        } catch (conversionError) {
-            console.warn('Конвертация не удалась, используем оригинал:', conversionError)
-        }
+    try {
+        glbPath = await convertToGLB(files, projectId)
+    } catch (conversionError) {
+        console.warn('Концертация не удалась:', conversionError)
     }
+    
+
+    // if (mainGltfFile) {
+    //     try {
+    //         glbPath = await convertToGLB(mainGltfFile, projectDir)
+    //     } catch (conversionError) {
+    //         console.warn('Конвертация не удалась, используем оригинал:', conversionError)
+    //     }
+    // }
 
     let modelUrl = ''
 

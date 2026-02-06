@@ -32,7 +32,7 @@ const ModelViewer: React.FC<IModelViewerProps> = ({
         isAllReady ? controls : null)
 
     const { loading, error } = useModelLoader(modelUrl, scene)
-    console.log([scene, camera, renderer, controls, loading, error])
+    // console.log([scene, camera, renderer, controls, loading, error])
 
     return (
         <div className="absolute left-[0] top-[0] w-[100vw] h-[100vh]">
