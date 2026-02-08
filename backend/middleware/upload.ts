@@ -58,7 +58,7 @@ const fileFilter = (req: any, file: any, cb: any) => {
     const allowedExtensions = [
         '.gltf', '.glb', '.bin',
         '.jpg', '.jpeg', '.png',
-        '.mlt', '.obj'
+        '.mlt', '.obj', '.ifc'
     ]
 
     const ext = path.extname(file.originalname).toLowerCase()
@@ -82,75 +82,75 @@ const upload = multer({
 //НАДО ПОДУМАТЬ КАК МОЖНО СОХРАНЯТЬ ВРЕМЕННЫЕ ФАЙЛЫ В ОТДЕЛЬНЫЕ ПАПКИ И КАК БРАТЬ ИХ ИМЯ
 
 
-export const convertToGLB = async (files: Express.Multer.File[], projectId: string): Promise<string> => {
-    try {
-       const tempDir = path.join(__dirname, '../../temp')
-       console.log([tempDir, 'писька'])
+// export const convertToGLB = async (files: Express.Multer.File[], projectId: string): Promise<string> => {
+//     try {
+//        const tempDir = path.join(__dirname, '../../temp')
+//        console.log([tempDir, 'писька'])
 
-    //    if (fs.existsSync(tempDir)) {
-    //     fs.rmSync(tempDir, { recursive: true })
-    //    }
+//     //    if (fs.existsSync(tempDir)) {
+//     //     fs.rmSync(tempDir, { recursive: true })
+//     //    }
 
-    //    fs.mkdirSync(tempDir, { recursive: true })
+//     //    fs.mkdirSync(tempDir, { recursive: true })
 
-       for (const file of files) {
-        if (file.path && fs.existsSync(file.path)) {
-            const filePath = path.join(tempDir, file.originalname)
-            fs.writeFileSync(file.path, filePath)
-        }
+//        for (const file of files) {
+//         if (file.path && fs.existsSync(file.path)) {
+//             const filePath = path.join(tempDir, file.originalname)
+//             fs.writeFileSync(file.path, filePath)
+//         }
         
-       }
+//        }
 
-       const gltfFile = files.find(f => 
-        f.originalname.toLowerCase().endsWith('.gltf')
-       )
+//        const gltfFile = files.find(f => 
+//         f.originalname.toLowerCase().endsWith('.gltf')
+//        )
 
-       if (!gltfFile) {
-        throw new Error("GLTF файл не был найден в загруженных")
-       }
+//        if (!gltfFile) {
+//         throw new Error("GLTF файл не был найден в загруженных")
+//        }
 
-       const gltfPath = path.join(tempDir, gltfFile.originalname)
+//        const gltfPath = path.join(tempDir, gltfFile.originalname)
 
-       const io = new NodeIO()
-            .registerExtensions(ALL_EXTENSIONS)
-            .registerDependencies(KHRONOS_EXTENSIONS as unknown as { [key: string]: unknown})
+//        const io = new NodeIO()
+//             .registerExtensions(ALL_EXTENSIONS)
+//             .registerDependencies(KHRONOS_EXTENSIONS as unknown as { [key: string]: unknown})
 
-       const document = await io.read(gltfPath)
+//        const document = await io.read(gltfPath)
     
-       const outputPath = path.join('uploads', projectId, 'model.glb')
-       const outputDir = path.dirname(outputPath)
-       if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir, { recursive: true })
-       }
+//        const outputPath = path.join('uploads', projectId, 'model.glb')
+//        const outputDir = path.dirname(outputPath)
+//        if (!fs.existsSync(outputDir)) {
+//         fs.mkdirSync(outputDir, { recursive: true })
+//        }
 
-       await io.write(outputPath, document)
+//        await io.write(outputPath, document)
 
-    //    fs.rmSync(tempDir, { recursive: true })
+//     //    fs.rmSync(tempDir, { recursive: true })
 
-       const stats = fs.statSync(outputPath)
-       console.log(`Конвертация успешна на ${(stats.size / 1024).toFixed(1)} KB`)
+//        const stats = fs.statSync(outputPath)
+//        console.log(`Конвертация успешна на ${(stats.size / 1024).toFixed(1)} KB`)
 
-       return outputPath
+//        return outputPath
 
-    } catch (error: any) {
-        console.error(`Ошибка конвертации: ${error}`)
+//     } catch (error: any) {
+//         console.error(`Ошибка конвертации: ${error}`)
         
-        // const ext = path.extname(gltfPath).toLowerCase()
+//         // const ext = path.extname(gltfPath).toLowerCase()
 
-        // if (ext === '.glb') {
-        //     try {
-        //         const outputPath = path.join(outputDir, 'model.glb')
-        //         fs.copyFileSync(gltfPath, outputPath)
-        //         console.log('Файл уже в формате GLB, копирнули его')
-        //         return outputPath
-        //     } catch (copyError) { 
-        //         console.error('Ошибка копирования файла GLB:', copyError)
-        //     }
-        // }
-        throw new Error (`Ошибка конвертации GLTF в GLB: ${error.message}`)
-    }
+//         // if (ext === '.glb') {
+//         //     try {
+//         //         const outputPath = path.join(outputDir, 'model.glb')
+//         //         fs.copyFileSync(gltfPath, outputPath)
+//         //         console.log('Файл уже в формате GLB, копирнули его')
+//         //         return outputPath
+//         //     } catch (copyError) { 
+//         //         console.error('Ошибка копирования файла GLB:', copyError)
+//         //     }
+//         // }
+//         throw new Error (`Ошибка конвертации GLTF в GLB: ${error.message}`)
+//     }
     
-}
+// }
 
 
 

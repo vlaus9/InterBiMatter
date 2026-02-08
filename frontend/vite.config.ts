@@ -4,8 +4,16 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  optimizeDeps: {
+    exclude: ['web-ifc-three', 'web-ifc']
+  },
   plugins: [
     react(),
     tailwindcss(),
   ],
+  server: {
+    fs: {
+      allow: ['..']
+    }
+  }
 })

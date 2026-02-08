@@ -5,6 +5,7 @@ import useAnimation from "./useAnimation"
 import useModelLoader from "./useModelLoader"
 import useSceneSetup from "./useSceneSetup"
 import useResize from "./useResize"
+import useModelLoaderIFC from "./useModelLoaderIFC"
 
 interface IModelViewerProps {
     modelUrl: string,
@@ -31,7 +32,8 @@ const ModelViewer: React.FC<IModelViewerProps> = ({
         isAllReady ? renderer : null, 
         isAllReady ? controls : null)
 
-    const { loading, error } = useModelLoader(modelUrl, scene)
+        useModelLoaderIFC(modelUrl, scene)
+    // const { loading, error } = useModelLoader(modelUrl, scene)
     // console.log([scene, camera, renderer, controls, loading, error])
 
     return (

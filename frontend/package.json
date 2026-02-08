@@ -27,7 +27,9 @@
     "react-router": "^7.9.6",
     "react-router-dom": "^7.9.6",
     "tailwindcss": "^4.1.15",
-    "three": "^0.182.0"
+    "three": "^0.149.0",
+    "web-ifc": "^0.0.44",
+    "web-ifc-three": "^0.0.126"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

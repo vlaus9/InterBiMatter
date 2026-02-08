@@ -17,33 +17,34 @@ const CreateProjectForm: React.FC = () => {
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
-            const files = Array.from(e.target.files)
+            const files = e.target.files
 
-            const hasGltf = files.some(file => 
-                file.name.toLowerCase().endsWith('.gltf') ||
-                file.name.toLowerCase().endsWith('.glb')
-            )
+            // const hasGltf = files.some(file => 
+            //     file.name.toLowerCase().endsWith('.gltf') ||
+            //     file.name.toLowerCase().endsWith('.glb')
+            // )
 
-            if (!hasGltf) {
-                alert('Пожалуйста, выберите хотя бы один .gltf или .glb файл')
-                return
-            }
-            setSelectedFiles(files)
+            // if (!hasGltf) {
+            //     alert('Пожалуйста, выберите хотя бы один .gltf или .glb файл')
+            //     return
+            // }
+            setSelectedFiles([files[0]])
+            console.log(setSelectedFiles)
 
-            const gltfFiles = files.filter(file => 
-                file.name.toLowerCase().endsWith('.gltf') || file.name.toLowerCase().endsWith('.glb')
-            )
+            // const gltfFiles = files.filter(file => 
+            //     file.name.toLowerCase().endsWith('.gltf') || file.name.toLowerCase().endsWith('.glb')
+            // )
 
-            const otherFiles = files.filter(file => 
-                !file.name.toLowerCase().endsWith('.gltf') && !file.name.toLowerCase().endsWith('.glb')
-            )
+            // const otherFiles = files.filter(file => 
+            //     !file.name.toLowerCase().endsWith('.gltf') && !file.name.toLowerCase().endsWith('.glb')
+            // )
 
-            console.log([otherFiles, gltfFiles])
+            // console.log([otherFiles, gltfFiles])
 
-            if (gltfFiles.length > 0) {
-                setFileName(`${gltfFiles[0].name} и еще ${files.length - 1} файл(ов)`)
-            }
-
+            // if (gltfFiles.length > 0) {
+            //     setFileName(`${gltfFiles[0].name} и еще ${files.length - 1} файл(ов)`)
+            // }
+            console.log(e.target.files)
         }
     }
 
@@ -111,14 +112,14 @@ const CreateProjectForm: React.FC = () => {
                                 <label htmlFor="fileProject" className='flex rounded-[4px] px-[15px] ml-[50px] w-[300px] h-[45px] bg-[var(--button-group-primary-bg)] justify-center items-center border cursor-pointer hover:border-[#d0cfcfff] hover:border-[2px] transition-all'>
                                 Загрузить файл модели
                                 </label>
-                                <input id='fileProject' type='file' accept='.gltf, .glb, .bin, .jpf, .jpeg, .png, .mtl' className='hidden' onChange={handleFileChange} multiple></input>
+                                <input id='fileProject' type='file' accept='.gltf, .glb, .bin, .jpf, .jpeg, .png, .mtl, .ifc' className='hidden' onChange={handleFileChange} multiple></input>
                             </>
                         :
                             <div className='flex flex-col justify-center gap-[10px]'>
                                 <label htmlFor="fileProject" className='flex rounded-[4px] px-[15px] w-[300px] h-[45px] bg-[var(--button-group-primary-bg)] justify-center items-center border cursor-pointer hover:border-[#d0cfcfff] hover:border-[2px] transition-all'>
                                 Выбрать другой файл
                                 </label>
-                                <input id='fileProject' type='file' accept='.gltf, .glb, .bin, .jpf, .jpeg, .png, .mtl' className='hidden' onChange={handleFileChange} multiple></input>
+                                <input id='fileProject' type='file' accept='.gltf, .glb, .bin, .jpf, .jpeg, .png, .mtl, .ifc' className='hidden' onChange={handleFileChange} multiple></input>
                                 <h3 className='w-[300px] text-[16px] text-center'>Выбран файл: {fileName}</h3>
                             </div>
                         }

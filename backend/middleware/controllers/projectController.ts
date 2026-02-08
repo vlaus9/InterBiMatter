@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { organizeProjectFiles, convertToGLB } from '../upload'
+import { organizeProjectFiles } from '../upload'
 import path from 'path'
 import Project from '../../models/Project'
 
@@ -77,15 +77,15 @@ export const createProject = async (req: Request, res: Response) => {
 
     const projectId = req.projectId || `project_${Date.now()}`
 
-    const { projectDir, organizedFiles, mainGltfFile} = await organizeProjectFiles(files, projectId)
+    // const { projectDir, organizedFiles, mainGltfFile} = await organizeProjectFiles(files, projectId)
 
-    let glbPath: string | null = null
+    // let glbPath: string | null = null
      
-    try {
-        glbPath = await convertToGLB(files, projectId)
-    } catch (conversionError) {
-        console.warn('Концертация не удалась:', conversionError)
-    }
+    // try {
+    //     glbPath = await convertToGLB(files, projectId)
+    // } catch (conversionError) {
+    //     console.warn('Концертация не удалась:', conversionError)
+    // }
     
 
     // if (mainGltfFile) {
@@ -96,18 +96,22 @@ export const createProject = async (req: Request, res: Response) => {
     //     }
     // }
 
-    let modelUrl = ''
+    let ifcPath: string | null
 
-    if (glbPath) {
-        modelUrl = `/uploads/${projectId}/model.glb`
-    } else if (mainGltfFile) {
-        modelUrl = `/uploads/${projectId}/original/${path.basename(mainGltfFile)}`
-    } else {
-        const modelFile = organizedFiles.find(f => f.type === 'model')
-        if (modelFile) {
-            modelUrl = `/uploads/${projectId}/original/${modelFile.originalName}`
-        }
-    }
+    let modelUrl = `/uploads/${projectId}/${files[0].originalname}`
+
+
+
+    // if (glbPath) {
+    //     modelUrl = `/uploads/${projectId}/model.glb`
+    // } else if (mainGltfFile) {
+    //     modelUrl = `/uploads/${projectId}/original/${path.basename(mainGltfFile)}`
+    // } else {
+    //     const modelFile = organizedFiles.find(f => f.type === 'model')
+    //     if (modelFile) {
+    //         modelUrl = `/uploads/${projectId}/original/${modelFile.originalName}`
+    //     }
+    // }
 
     const newProject = await Project.create({
         id: projectId,
@@ -115,11 +119,12 @@ export const createProject = async (req: Request, res: Response) => {
         creationDate: Date.now(),
         autor: req.body.autor,
         modelPath: modelUrl,
-        files: organizedFiles.map(f => ({
-            name: f.originalName,
-            type: f.type,
-            path: f.path.replace(/^.*uploads[\\/]/, '')
-        }))
+        files: []
+        // files: organizedFiles.map(f => ({
+        //     name: f.originalName,
+        //     type: f.type,
+        //     path: f.path.replace(/^.*uploads[\\/]/, '')
+        // }))
     })
 
     const responseData = {
