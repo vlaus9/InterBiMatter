@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'
-import { organizeProjectFiles } from '../upload'
+// import { organizeProjectFiles } from '../upload'
 import path from 'path'
 import Project from '../../models/Project'
 
 declare global {
     namespace Express {
         interface Request {
+            projectDir?: string
             projectId?: string
         }
     }
@@ -66,7 +67,7 @@ export const getProjectById = async (req: Request, res: Response) => {
 
 export const createProject = async (req: Request, res: Response) => {
  try {
-    if (!req.files || req.files.length === 0) {
+    if (!req.files || req.files.length === 0 || !req.projectDir) {
         return res.status(400).json({
             status: 'fail',
             message: 'Файл модели обязателен'
@@ -77,6 +78,7 @@ export const createProject = async (req: Request, res: Response) => {
 
     const projectId = req.projectId || `project_${Date.now()}`
 
+    const projectDirWithUrl = `${req.protocol}://${req.get('host')}/uploads/${path.basename(req.projectDir)}/${files[0].originalname}`
     // const { projectDir, organizedFiles, mainGltfFile} = await organizeProjectFiles(files, projectId)
 
     // let glbPath: string | null = null
@@ -98,7 +100,7 @@ export const createProject = async (req: Request, res: Response) => {
 
     let ifcPath: string | null
 
-    let modelUrl = `/uploads/${projectId}/${files[0].originalname}`
+    let modelUrl = projectDirWithUrl
 
 
 
@@ -154,45 +156,45 @@ export const addFiles = async (req: Request, res: Response) => {
     try {
         const projectId = req.params.projectId
         const files = req.files as Express.Multer.File[]
-        const { organizedFiles, mainGltfFile } = await organizeProjectFiles(files, projectId)
+        // const { organizedFiles, mainGltfFile } = await organizeProjectFiles(files, projectId)
 
-        const filesToAdd = organizedFiles.map(file => ({
-            name: file.originalName,
-            type: file.type,
-            path: file.path.replace(/^.*uploads[\\/]/, '')
-        }))
+        // const filesToAdd = organizedFiles.map(file => ({
+        //     name: file.originalName,
+        //     type: file.type,
+        //     path: file.path.replace(/^.*uploads[\\/]/, '')
+        // }))
 
-        const updateData: any = {
-            $push: {
-                files: { $each: filesToAdd}
-            },
-            $set: {
-                updateAt: new Date()
-            }
-        }
+        // const updateData: any = {
+        //     $push: {
+        //         files: { $each: filesToAdd}
+        //     },
+        //     $set: {
+        //         updateAt: new Date()
+        //     }
+        // }
 
-        if (mainGltfFile && typeof mainGltfFile === 'string') {
-            updateData.$set.mainGltfFile = mainGltfFile.replace(/^.*uploads[\\/]/, '')
-        }
+        // if (mainGltfFile && typeof mainGltfFile === 'string') {
+        //     updateData.$set.mainGltfFile = mainGltfFile.replace(/^.*uploads[\\/]/, '')
+        // }
 
-        const result = await Project.updateOne(
-            { id: projectId },
-            updateData
-        )
+        // const result = await Project.updateOne(
+        //     { id: projectId },
+        //     updateData
+        // )
 
-        if (result.matchedCount === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Проект не найден'
-            })
-        }
+        // if (result.matchedCount === 0) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: 'Проект не найден'
+        //     })
+        // }
 
         res.json({
             success: true,
             message: 'Файлы успешно загружены',
-            files: organizedFiles,
-            matchedCount: result.matchedCount,
-            modifiedCount: result.modifiedCount
+            files: null,
+            matchedCount: null,
+            modifiedCount: null
         })
     }
     catch (error) {

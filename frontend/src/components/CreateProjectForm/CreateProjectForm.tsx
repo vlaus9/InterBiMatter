@@ -29,7 +29,6 @@ const CreateProjectForm: React.FC = () => {
             //     return
             // }
             setSelectedFiles([files[0]])
-            console.log(setSelectedFiles)
 
             // const gltfFiles = files.filter(file => 
             //     file.name.toLowerCase().endsWith('.gltf') || file.name.toLowerCase().endsWith('.glb')

@@ -10,10 +10,28 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    {
+      name: 'configure-wasm-headers',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          if (req.url?.endsWith('.wasm')) {
+            res.setHeader('Content-Type', 'application/wasm')
+          }
+          next()
+        })
+      }
+    },
   ],
   server: {
     fs: {
       allow: ['..']
     }
-  }
-})
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        assetFileNames:'assets/[name]-[hash][extname]'
+        }
+      }
+    }
+  })

@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { NodeIO } from '@gltf-transform/core'
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions'
 import { KHRONOS_EXTENSIONS } from '@gltf-transform/extensions'
+import { emitWarning } from 'process'
 
 const createProjectDir = (projectId: string) => {
     const dir = path.join(__dirname, '../../uploads', projectId)
@@ -41,12 +42,14 @@ const createTempDir = () => {
 const storage = multer.diskStorage({
     destination: (req: any, file, cb) => {
         const tempDir = createTempDir()
-
         if (!req.projectId) {
             req.projectId = uuidv4()
         }
-
-        cb(null, tempDir)
+        if (!req.projectDir){
+            req.projectDir = createProjectDir(req.projectId)
+        }
+        
+        cb(null, req.projectDir)
     },
 
     filename: (req: any, file, cb) => {
@@ -174,68 +177,77 @@ const upload = multer({
 
 
 
-
-
-export const organizeProjectFiles = async (
-    files: Express.Multer.File[],
-    projectId: string
-) => {
-    const projectDir = createProjectDir(projectId)
-    createProjectStructure(projectDir)
-
-    let mainGltfFile: string | null = null
+// export const organizeProjectFiles = async (
+//     // file: Express.Multer.File,
+//     projectId: string
+// ) => {
+//     const projectDir = createProjectDir(projectId)
+//     const tempDir = createTempDir()
+//     fs.renameSync(tempDir, projectDir)
     
-    const organizedFiles: Array <{
-        originalName: string
-        path: string
-        type: 'model' | 'texture' | 'binary' | 'material' | 'other'
-    }> = []
+//     return projectDir as string
+// }
 
-    for (const file of files) {
-        const ext = path.extname(file.originalname).toLowerCase()
+// export const organizeProjectFiles = async (
+//     files: Express.Multer.File[],
+//     projectId: string
+// ) => {
+//     const projectDir = createProjectDir(projectId)
+//     createProjectStructure(projectDir)
 
-        let destination = ''
-        let fileType: 'model' | 'texture' | 'binary' | 'material' | 'other' = 'other'
+//     let mainGltfFile: string | null = null
+    
+//     const organizedFiles: Array <{
+//         originalName: string
+//         path: string
+//         type: 'model' | 'texture' | 'binary' | 'material' | 'other'
+//     }> = []
 
-        if (ext === '.gltf' || ext === '.glb') {
-            destination = path.join(projectDir, 'original', file.originalname)
-            fileType = 'model'
+//     for (const file of files) {
+//         const ext = path.extname(file.originalname).toLowerCase()
 
-            if (!mainGltfFile) {
-                mainGltfFile = destination
-            }
-        }
-        else if (ext === 'bin') {
-            destination = path.join(projectDir, 'original', file.originalname)
-            fileType = 'binary'
-        }
-        else if (['.jpg', '.jpeg', '.png'].includes(ext)) {
-            destination = path.join(projectDir, 'textures', file.originalname)
-            fileType = 'texture'
-        }
-        else if (ext === '.mtl') {
-            destination = path.join(projectDir, 'materials', file.originalname)
-            fileType = 'material'
-        }
-        else {
-            destination = path.join(projectDir, 'original', file.originalname)
-        }
+//         let destination = ''
+//         let fileType: 'model' | 'texture' | 'binary' | 'material' | 'other' = 'other'
 
-        fs.renameSync(file.path, destination)
+//         if (ext === '.gltf' || ext === '.glb') {
+//             destination = path.join(projectDir, 'original', file.originalname)
+//             fileType = 'model'
 
-        organizedFiles.push({
-            originalName: file.originalname,
-            path: destination,
-            type: fileType
-        })
-    }
+//             if (!mainGltfFile) {
+//                 mainGltfFile = destination
+//             }
+//         }
+//         else if (ext === 'bin') {
+//             destination = path.join(projectDir, 'original', file.originalname)
+//             fileType = 'binary'
+//         }
+//         else if (['.jpg', '.jpeg', '.png'].includes(ext)) {
+//             destination = path.join(projectDir, 'textures', file.originalname)
+//             fileType = 'texture'
+//         }
+//         else if (ext === '.mtl') {
+//             destination = path.join(projectDir, 'materials', file.originalname)
+//             fileType = 'material'
+//         }
+//         else {
+//             destination = path.join(projectDir, 'original', file.originalname)
+//         }
 
-    return{
-        projectDir,
-        organizedFiles,
-        mainGltfFile
-    }
-}
+//         fs.renameSync(file.path, destination)
+
+//         organizedFiles.push({
+//             originalName: file.originalname,
+//             path: destination,
+//             type: fileType
+//         })
+//     }
+
+//     return{
+//         projectDir,
+//         organizedFiles,
+//         mainGltfFile
+//     }
+// }
 
 export default upload
 
