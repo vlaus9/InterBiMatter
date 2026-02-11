@@ -1,129 +1,129 @@
 import { useEffect, useState } from "react"
 import * as THREE from "three"
 import * as OBC from "@thatopen/components"
+import * as FRAG from "@thatopen/fragments"
+import type { OrbitControls } from "three/examples/jsm/Addons.js"
 
 
 const useModelLoaderIFC = (
     modelURL: string,
-    scene: THREE.Scene | null
+    scene: THREE.Scene | null,
+    camera: THREE.Camera | null,
+    controls: OrbitControls | null
 ) => {
 
 
     const [model, setModel] = useState<THREE.Group | null>(null)
-    const [components, setComponents] = useState<OBC.Components | null>(null)
-    const [loaderReady, setLoaderReady] = useState<boolean>(false)
+    const [ready, setReady] = useState<boolean>(false)
     const [world, setWorld] = useState<OBC.World | null>(null)
+    const [worker, setWorker] = useState<string>('')
+    const [fragmentsBytes, setFragmentsBytes] = useState<Uint8Array<ArrayBufferLike> | null>(null)
+
+
+    const ifcImporter = new FRAG.IfcImporter()
+    ifcImporter.wasm = { absolute: true, path: "https://unpkg.com/web-ifc@0.0.75/"}
+    
 
     useEffect(() => {
+
+        if (modelURL) {
+
+            const convertIFC = async () => {
+
+            try {
+
+                const url = modelURL
+                const ifcFile = await fetch(url)
+                const ifcBuffer = await ifcFile.arrayBuffer()
+                const ifcBytes = new Uint8Array(ifcBuffer)
+                let fragBytesTemp
+
+                    fragBytesTemp = await ifcImporter.process({
+                    bytes: ifcBytes,
+                    progressCallback: (progress, data) => { 
+                        // console.log(progress, data)
+                        if (progress === 1) {
+                            setReady(true)
+                        }
+                    }
+                })
+
+                setFragmentsBytes(fragBytesTemp)
+                
+                
+
+            } catch (error: any) {
+                console.log("Ошибка конвертации IFC:", error.mesasge)
+            }
+        }
+
+        convertIFC()
+
+        const getWorkerUrl = async () => {
+            
+        try {
+
+            const githubUrl = "https://thatopen.github.io/engine_fragment/resources/worker.mjs"
+            const fetchedUrl = await fetch(githubUrl)
+            const workerBlob = await fetchedUrl.blob()
+            const workerFile = new File([workerBlob], "worker.mjs", {
+                type: "text/javascript"})
+            const workerUrl = URL.createObjectURL(workerFile)
+            setWorker(workerUrl)
+
+            return 
+        } catch (error: any) {
+            console.log("Ошибка настройки ядра фрагментов:", error.message)
+        }
+        }
         
-        const initComponents = async () => {
+        getWorkerUrl()
 
-            try{
+        }
             
-            const coreComponents = new OBC.Components()
-            coreComponents.init()
-            const worlds = coreComponents.get(OBC.Worlds)
-            
-            const world = worlds.create<
-            OBC.SimpleScene,
-            OBC.SimpleCamera,
-            OBC.SimpleRenderer>()
+    }, [modelURL, scene, camera, controls])
 
-            world.scene = new OBC.SimpleScene(coreComponents)
-            world.scene.setup()
-            world.scene.three.background = new THREE.Color(0xf0f0f0)
 
-            const container = document.createElement("div")
-            container.style.width = '1px'
-            container.style.height = '1px'
-            container.style.position = 'absolute'
-            container.style.overflow = 'hidden'
-            document.body.appendChild(container)
+    useEffect (() => {
+       
+    const loadModel = async () => {
 
-            world.renderer = new OBC.SimpleRenderer(coreComponents, container)
-
-            world.camera = new OBC.SimpleCamera(coreComponents)
-            world.camera.controls.setLookAt(10, 10, 10, 0, 0, 0)
-
-            
-
-            const ifcLoader = coreComponents.get(OBC.IfcLoader)
-
-            await ifcLoader.setup({
-                wasm: {
-                path: "https://unpkg.com/web-ifc@0.0.53/",
-                absolute: true
-            },
-                webIfc: {
-                    COORDINATE_TO_ORIGIN: true
+            try {
+                if (!fragmentsBytes || !ready || !worker) return
+                console.log('Работает')
+                const fragmentsModel = new FRAG.FragmentsModels(worker)
+                const model = await fragmentsModel.load(fragmentsBytes, { modelId: "model"})
+                console.log(model.object)
+                
+                if (camera) {
+                    model.object.add(camera)
                 }
+                scene?.add(model.object)
+                
+                await fragmentsModel.update(true)
+                
+                controls?.addEventListener("change", () => {
+                fragmentsModel.update()
             })
 
-            setWorld(world)
-            setComponents(coreComponents)
-            setLoaderReady(true)
-            console.log('Компоненты инициализированы')
+            fragmentsModel.models.materials.list.onItemSet.add(({ value: material }) => {
+                if (!("isLodMaterial" in material && material.isLodMaterial)) {
+                    material.polygonOffset = true
+                    material.polygonOffsetUnits = 1
+                    material.polygonOffsetFactor = Math.random()            
+                }
+            })
             } catch (error: any) {
-                console.error('Ошибочка в инициализации вышла', error.message)
-            }
-            
-        }
-
-        initComponents()
-
-        return () => {
-            if (components) {
-                components.dispose()
+                console.log("Ошибка загрузки модели:", error.message)
             }
         }
 
-    }, [])
+            loadModel()
 
-    useEffect(() => {
-        const loadModel = async () => {
-            if (!loaderReady || !components || !scene || !modelURL) return
 
-        try {
-            
-            const ifcLoader = components.get(OBC.IfcLoader)
-            const fragment = components.get(OBC.FragmentsManager)
-            const handleFragmentLoaded = (group: any) => {
-                if (!group.isObject3D) return
-                
-                scene.add(group)
-                setModel(group)
-                const box = new THREE.Box3().setFromObject(group); 
-                const size = box.getSize(new THREE.Vector3()); 
-                const maxDim = Math.max(size.x, size.y, size.z); 
-                const scale = 10 / maxDim;
-                group.scale.multiplyScalar(scale)
-                box.setFromObject(group)
-                const center = box.getCenter(new THREE.Vector3()); // Центр модели
-                group.position.sub(center)
-                console.log('Модель загружена')
-                
-            }
-            fragment.onFragmentsLoaded.add(handleFragmentLoaded)
-
-            const response = await fetch(modelURL)
-            const data = await response.arrayBuffer()
-            const buffer = new Uint8Array(data)
-
-            await ifcLoader.load(buffer, true, 'model')
-          
-            return () => {
-                fragment.onFragmentsLoaded.remove(handleFragmentLoaded)
-                if (model) scene?.remove(model)
-            }
-            
-            }
-            catch (error: any) {
-                console.log('Ошибка загрузки модели', error.message)
-            }
-        }
-        loadModel()
-    }, [modelURL, scene, loaderReady])
+}, [ready])
 
 }
+
 
 export default useModelLoaderIFC

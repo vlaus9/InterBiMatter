@@ -32,7 +32,7 @@ const ModelViewer: React.FC<IModelViewerProps> = ({
         isAllReady ? renderer : null, 
         isAllReady ? controls : null)
 
-        useModelLoaderIFC(modelUrl, scene)
+    useModelLoaderIFC(modelUrl, scene, camera, controls)
     // const { loading, error } = useModelLoader(modelUrl, scene)
     // console.log([scene, camera, renderer, controls, loading, error])
 
