@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose"
+import { v4 as uuidv4 } from "uuid"
 
 interface IFiles {
     name: string,
@@ -20,6 +21,7 @@ const projectSchema: Schema<IProject> = new Schema(
         id: {
             type: String,
             required: true,
+            default: uuidv4
         },
         name: {
             type: String,
@@ -45,7 +47,7 @@ const projectSchema: Schema<IProject> = new Schema(
 
     },
     {
-        timestamps: true
+        timestamps: true,
     }
 )
 

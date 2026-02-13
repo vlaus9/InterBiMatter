@@ -13,9 +13,7 @@ const useModelLoaderIFC = (
 ) => {
 
 
-    const [model, setModel] = useState<THREE.Group | null>(null)
     const [ready, setReady] = useState<boolean>(false)
-    const [world, setWorld] = useState<OBC.World | null>(null)
     const [worker, setWorker] = useState<string>('')
     const [fragmentsBytes, setFragmentsBytes] = useState<Uint8Array<ArrayBufferLike> | null>(null)
 
@@ -90,10 +88,8 @@ const useModelLoaderIFC = (
 
             try {
                 if (!fragmentsBytes || !ready || !worker) return
-                console.log('Работает')
                 const fragmentsModel = new FRAG.FragmentsModels(worker)
                 const model = await fragmentsModel.load(fragmentsBytes, { modelId: "model"})
-                console.log(model.object)
                 
                 if (camera) {
                     model.object.add(camera)

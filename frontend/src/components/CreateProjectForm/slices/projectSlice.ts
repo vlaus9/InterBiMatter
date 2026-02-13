@@ -66,24 +66,24 @@ export const createProject = createAsyncThunk(
     } 
 )
 
-// export const openProject = createAsyncThunk(
-//     'project/getProject',
-//     async(projectId: string, { rejectWithValue }) => {
-//         try {
-//             const project = await axios.get<IProjectResponse>(
-//                 `http://localhost:80/api/project/getProject/${projectId}`,
-//             )
+export const openProject = createAsyncThunk(
+    'project/getProject',
+    async(projectId: string, { rejectWithValue }) => {
+        try {
+            const project = await axios.get<IProjectResponse>(
+                `http://localhost:80/api/project/getProject/${projectId}`,
+            )
+            console.log(project.data.data.project)
+            return project.data
+        } catch (error: any) {
+            const errorMessage = error.response.data.message
+             || error.message
+             || 'Ошибка получения данных проекта'
 
-//             return project.data
-//         } catch (error: any) {
-//             const errorMessage = error.response.data.message
-//              || error.message
-//              || 'Ошибка получения данных проекта'
-
-//              return rejectWithValue(errorMessage)
-//         }
-//     }
-// )
+             return rejectWithValue(errorMessage)
+        }
+    }
+)
 
 const projectSlice = createSlice({
     name: 'project',
@@ -109,7 +109,7 @@ const projectSlice = createSlice({
                 state.project = JSON.parse(project);
                 state.isActive = true
             }
-        }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -127,20 +127,20 @@ const projectSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload as string
             })
-            // .addCase(openProject.pending, (state) => {
-            //     state.loading = true;
-            //     state.error = null
-            // })
-            // .addCase(openProject.fulfilled, (state, action: PayloadAction<IProjectResponse>) => {
-            //     state.loading = false;
-            //     state.project = action.payload.data.project
-            //     state.isActive = true;
-            //     state.error = null
-            // })
-            // .addCase(openProject.rejected, (state, action) => {
-            //     state.loading = false;
-            //     state.error = action.payload as string
-            // })
+            .addCase(openProject.pending, (state) => {
+                state.loading = true;
+                state.error = null
+            })
+            .addCase(openProject.fulfilled, (state, action: PayloadAction<IProjectResponse>) => {
+                state.loading = false;
+                state.project = action.payload.data.project
+                state.isActive = true;
+                state.error = null
+            })
+            .addCase(openProject.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string
+            })
     }
 }
 )
