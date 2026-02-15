@@ -19,30 +19,9 @@ const CreateProjectForm: React.FC = () => {
         if (e.target.files && e.target.files.length > 0) {
             const files = e.target.files
 
-            // const hasGltf = files.some(file => 
-            //     file.name.toLowerCase().endsWith('.gltf') ||
-            //     file.name.toLowerCase().endsWith('.glb')
-            // )
-
-            // if (!hasGltf) {
-            //     alert('Пожалуйста, выберите хотя бы один .gltf или .glb файл')
-            //     return
-            // }
-            setSelectedFiles([files[0]])
-
-            // const gltfFiles = files.filter(file => 
-            //     file.name.toLowerCase().endsWith('.gltf') || file.name.toLowerCase().endsWith('.glb')
-            // )
-
-            // const otherFiles = files.filter(file => 
-            //     !file.name.toLowerCase().endsWith('.gltf') && !file.name.toLowerCase().endsWith('.glb')
-            // )
-
-            // console.log([otherFiles, gltfFiles])
-
-            // if (gltfFiles.length > 0) {
-            //     setFileName(`${gltfFiles[0].name} и еще ${files.length - 1} файл(ов)`)
-            // }
+            setSelectedFiles([files[0]]) 
+            // ПЕРЕПИСАТЬ НА ОДИН ФАЙЛ
+            
             console.log(e.target.files)
         }
     }

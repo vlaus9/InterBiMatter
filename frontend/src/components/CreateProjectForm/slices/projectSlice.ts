@@ -8,7 +8,8 @@ interface IOrganizedFiles {
 }
 
 export interface IProject {
-    id: string | null
+    _id: string | ''
+    id: string | ''
     name: string
     creationDate: Date | null
     autor: string

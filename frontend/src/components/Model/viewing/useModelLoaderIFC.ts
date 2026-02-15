@@ -12,7 +12,6 @@ const useModelLoaderIFC = (
     controls: OrbitControls | null
 ) => {
 
-
     const [ready, setReady] = useState<boolean>(false)
     const [worker, setWorker] = useState<string>('')
     const [fragmentsBytes, setFragmentsBytes] = useState<Uint8Array<ArrayBufferLike> | null>(null)
@@ -108,6 +107,7 @@ const useModelLoaderIFC = (
                     material.polygonOffsetUnits = 1
                     material.polygonOffsetFactor = Math.random()            
                 }
+
             })
             } catch (error: any) {
                 console.log("Ошибка загрузки модели:", error.message)
@@ -116,9 +116,9 @@ const useModelLoaderIFC = (
 
             loadModel()
 
-
-}, [ready])
-
+            
+        }, [ready])
+        
 }
 
 

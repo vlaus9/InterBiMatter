@@ -1,11 +1,11 @@
 import { useRef } from "react"
-import useThreeScene from "./useThreeScene"
-import useCamera from "./useCamera"
-import useAnimation from "./useAnimation"
-import useModelLoader from "./useModelLoader"
-import useSceneSetup from "./useSceneSetup"
-import useResize from "./useResize"
-import useModelLoaderIFC from "./useModelLoaderIFC"
+import useThreeScene from "./viewing/useThreeScene"
+import useCamera from "./viewing/useCamera"
+import useAnimation from "./viewing/useAnimation"
+import useModelLoader from "./viewing/useModelLoader"
+import useSceneSetup from "./viewing/useSceneSetup"
+import useResize from "./viewing/useResize"
+import useModelLoaderIFC from "./viewing/useModelLoaderIFC"
 
 interface IModelViewerProps {
     modelUrl: string,
@@ -33,9 +33,8 @@ const ModelViewer: React.FC<IModelViewerProps> = ({
         isAllReady ? controls : null)
 
     useModelLoaderIFC(modelUrl, scene, camera, controls)
-    // const { loading, error } = useModelLoader(modelUrl, scene)
-    // console.log([scene, camera, renderer, controls, loading, error])
-
+        
+        
     return (
         <div className="absolute left-[0] top-[0] w-[100vw] h-[100vh]">
             <div
