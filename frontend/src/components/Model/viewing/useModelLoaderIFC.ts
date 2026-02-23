@@ -3,6 +3,8 @@ import * as THREE from "three"
 import * as OBC from "@thatopen/components"
 import * as FRAG from "@thatopen/fragments"
 import type { OrbitControls } from "three/examples/jsm/Addons.js"
+import { modelStore } from "../store/model-store"
+import { workerUrlStore } from "../store/workerUrl-store"
 
 
 const useModelLoaderIFC = (
@@ -15,7 +17,8 @@ const useModelLoaderIFC = (
     const [ready, setReady] = useState<boolean>(false)
     const [worker, setWorker] = useState<string>('')
     const [fragmentsBytes, setFragmentsBytes] = useState<Uint8Array<ArrayBufferLike> | null>(null)
-
+    
+    workerUrlStore.setWorkerUrl(worker)
 
     const ifcImporter = new FRAG.IfcImporter()
     ifcImporter.wasm = { absolute: true, path: "https://unpkg.com/web-ifc@0.0.75/"}
@@ -93,7 +96,11 @@ const useModelLoaderIFC = (
                 if (camera) {
                     model.object.add(camera)
                 }
-                scene?.add(model.object)
+
+                if (model) {
+                    scene?.add(model.object)
+                    modelStore.setModel(model)
+                }
                 
                 await fragmentsModel.update(true)
                 
