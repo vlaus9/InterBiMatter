@@ -79,41 +79,8 @@ export const createProject = async (req: Request, res: Response) => {
     const projectId = req.projectId || `project_${Date.now()}`
 
     const projectDirWithUrl = `${req.protocol}://${req.get('host')}/uploads/${path.basename(req.projectDir)}/${files[0].originalname}`
-    // const { projectDir, organizedFiles, mainGltfFile} = await organizeProjectFiles(files, projectId)
-
-    // let glbPath: string | null = null
-     
-    // try {
-    //     glbPath = await convertToGLB(files, projectId)
-    // } catch (conversionError) {
-    //     console.warn('Концертация не удалась:', conversionError)
-    // }
-    
-
-    // if (mainGltfFile) {
-    //     try {
-    //         glbPath = await convertToGLB(mainGltfFile, projectDir)
-    //     } catch (conversionError) {
-    //         console.warn('Конвертация не удалась, используем оригинал:', conversionError)
-    //     }
-    // }
-
-    let ifcPath: string | null
 
     let modelUrl = projectDirWithUrl
-
-
-
-    // if (glbPath) {
-    //     modelUrl = `/uploads/${projectId}/model.glb`
-    // } else if (mainGltfFile) {
-    //     modelUrl = `/uploads/${projectId}/original/${path.basename(mainGltfFile)}`
-    // } else {
-    //     const modelFile = organizedFiles.find(f => f.type === 'model')
-    //     if (modelFile) {
-    //         modelUrl = `/uploads/${projectId}/original/${modelFile.originalName}`
-    //     }
-    // }
 
     const newProject = await Project.create({
         id: projectId,
@@ -152,60 +119,6 @@ export const createProject = async (req: Request, res: Response) => {
     }
 }
 
-export const addFiles = async (req: Request, res: Response) => {
-    try {
-        const projectId = req.params.projectId
-        const files = req.files as Express.Multer.File[]
-        // const { organizedFiles, mainGltfFile } = await organizeProjectFiles(files, projectId)
-
-        // const filesToAdd = organizedFiles.map(file => ({
-        //     name: file.originalName,
-        //     type: file.type,
-        //     path: file.path.replace(/^.*uploads[\\/]/, '')
-        // }))
-
-        // const updateData: any = {
-        //     $push: {
-        //         files: { $each: filesToAdd}
-        //     },
-        //     $set: {
-        //         updateAt: new Date()
-        //     }
-        // }
-
-        // if (mainGltfFile && typeof mainGltfFile === 'string') {
-        //     updateData.$set.mainGltfFile = mainGltfFile.replace(/^.*uploads[\\/]/, '')
-        // }
-
-        // const result = await Project.updateOne(
-        //     { id: projectId },
-        //     updateData
-        // )
-
-        // if (result.matchedCount === 0) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: 'Проект не найден'
-        //     })
-        // }
-
-        res.json({
-            success: true,
-            message: 'Файлы успешно загружены',
-            files: null,
-            matchedCount: null,
-            modifiedCount: null
-        })
-    }
-    catch (error) {
-        console.error('Ошибка загрузки файлов:', error)
-        res.status(500).json({
-            success: false,
-            message: 'ошибка загрузки файлов',
-            error: error instanceof Error ? error.message : 'Неизвестная ошибка'
-        })
-    }
-}
 
  export const deleteProject = async (req: Request, res: Response) => {
     try {

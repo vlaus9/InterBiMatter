@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import * as THREE from "three"
 
+
 const useThreeScene = (containerRef: React.RefObject<HTMLElement | null>) => {
 
     const sceneRef = useRef<THREE.Scene | null>(null)

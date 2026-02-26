@@ -6,6 +6,9 @@ import useModelLoader from "./viewing/useModelLoader"
 import useSceneSetup from "./viewing/useSceneSetup"
 import useResize from "./viewing/useResize"
 import useModelLoaderIFC from "./viewing/useModelLoaderIFC"
+import { rendererStore } from "./store/renderer-store"
+import { cameraStore } from "./store/camera-store"
+import { sceneStore } from "./store/scene-store"
 
 interface IModelViewerProps {
     modelUrl: string,
@@ -22,6 +25,12 @@ const ModelViewer: React.FC<IModelViewerProps> = ({
     const { scene, renderer, isReady } = useThreeScene(containerRef)
     const { camera, controls } = useCamera(containerRef, renderer, isReady)
 
+    if (renderer && camera && scene) {
+        rendererStore.setRenderer(renderer)
+        cameraStore.setCamera(camera)
+        sceneStore.setScene(scene)
+    }
+    
     useSceneSetup(scene)
     useResize(containerRef, camera, renderer)
 
