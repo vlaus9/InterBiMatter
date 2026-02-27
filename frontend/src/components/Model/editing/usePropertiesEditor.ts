@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { workerUrlStore } from '../store/workerUrl-store'
 
 
-type TTableData = {
+export type TTableData = {
     itemName: string;
     value?: string | number | boolean;
     localId: number;
@@ -27,7 +27,7 @@ type TAttributeType = {
 
 
 
-class PropertyEditor {
+class PropertiesEditor {
 
         onItemCreated = new OBC.Event<void>()
         onPropertiesUpdated = new OBC.Event<TTableNode[]>()
@@ -403,4 +403,6 @@ class PropertyEditor {
             })
         }
     }
+
+export const editor = new PropertiesEditor()
     
