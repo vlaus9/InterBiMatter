@@ -6,9 +6,8 @@ import useModelLoader from "./viewing/useModelLoader"
 import useSceneSetup from "./viewing/useSceneSetup"
 import useResize from "./viewing/useResize"
 import useModelLoaderIFC from "./viewing/useModelLoaderIFC"
-import { rendererStore } from "./store/renderer-store"
-import { cameraStore } from "./store/camera-store"
-import { sceneStore } from "./store/scene-store"
+import AddItemModal from "./editing-UI/propertiesEditor-UI"
+import { editor } from "./editing/usePropertiesEditor"
 
 interface IModelViewerProps {
     modelUrl: string,
@@ -26,9 +25,9 @@ const ModelViewer: React.FC<IModelViewerProps> = ({
     const { camera, controls } = useCamera(containerRef, renderer, isReady)
 
     if (renderer && camera && scene) {
-        rendererStore.setRenderer(renderer)
-        cameraStore.setCamera(camera)
-        sceneStore.setScene(scene)
+        editor.setRenderer(renderer)
+        editor.setCamera(camera)
+        editor.setScene(scene)
     }
     
     useSceneSetup(scene)
@@ -53,6 +52,7 @@ const ModelViewer: React.FC<IModelViewerProps> = ({
                 
             </div>
 
+            {/* <AddItemModal /> */}
         </div>
     )
 }

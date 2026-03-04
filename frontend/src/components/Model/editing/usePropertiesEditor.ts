@@ -2,6 +2,7 @@ import * as OBC from '@thatopen/components'
 import * as FRAGS from '@thatopen/fragments'
 import * as THREE from 'three'
 import { workerUrlStore } from '../store/workerUrl-store'
+import { all } from 'axios'
 
 
 export type TTableData = {
@@ -67,18 +68,13 @@ class PropertiesEditor {
 
         private _model: FRAGS.FragmentsModel | null = null
         private _modelId: string | null = null
-        private _fragments: FRAGS.FragmentsModels 
+        private _fragments: FRAGS.FragmentsModels | null = null
         private _renderer: THREE.WebGLRenderer | null = null
         private _camera: THREE.PerspectiveCamera | null = null
         private _scene: THREE.Scene | null = null
+        private _worker: string = ''
+        private _eventsSetup: boolean = false
 
-
-        constructor() {
-            const workerUrl = workerUrlStore.getWorkerUrl()
-            this._fragments = new FRAGS.FragmentsModels(workerUrl)
-            this.setupEvents()
-        }
-        
 
         async init() {
             if (this._model) {
@@ -94,6 +90,9 @@ class PropertiesEditor {
 
             this._model = model
             this._modelId = this._model.modelId
+            this.init()
+            this._fragments?.models.list.set(this._model.modelId, this._model)
+            this._eventsSetup = false
         }
 
         setRenderer(renderer: THREE.WebGLRenderer) {
@@ -101,6 +100,11 @@ class PropertiesEditor {
                 throw new Error('Renderer отсутствует')
             }
             this._renderer = renderer
+
+            if (!this._eventsSetup) {
+                this.setupEvents()
+                this._eventsSetup = true
+            }
         }
 
         setCamera(camera: THREE.PerspectiveCamera) {
@@ -115,6 +119,11 @@ class PropertiesEditor {
                 throw new Error('Scene отсутствует')
             }
             this._scene = scene
+        }
+
+        setWorker(worker: string) {
+            this._worker = worker
+            this._fragments = new FRAGS.FragmentsModels(this._worker)
         }
 
 
@@ -323,10 +332,13 @@ class PropertiesEditor {
         //события кликов: два клика - выделить объект, esc - сбросить выделение
         private setupEvents() {
             const mouse = new THREE.Vector2()
-            const canvas = this._renderer!.domElement
+
+            if (!this._renderer) return 
+
+            const canvas = this._renderer.domElement
             canvas.addEventListener('dblclick',  async(event) => {
-                mouse.x = event.clientX
-                mouse.y = event.clientY
+                mouse.x = (event.clientX / canvas.clientWidth) * 2 - 1
+                mouse.y = - (event.clientY / canvas.clientHeight) * 2 + 1
 
                 let result: any
 
@@ -334,10 +346,82 @@ class PropertiesEditor {
                     this.currentElement.disposeMeshes(this.currentMesh)
                 }
 
-                //рейкаст для моделей
-                for (const [, model] of this._fragments.models.list) {
-                    if (!this._camera || !this._renderer) continue
 
+
+
+if (!this._camera || !this._renderer || !this._scene) return
+
+// Создаем луч из камеры через точку мыши
+const raycaster = new THREE.Raycaster()
+raycaster.setFromCamera(mouse, this._camera)
+raycaster.far = 3000000
+
+const meshes: THREE.Mesh[] = [] 
+this._model?.object.traverse((child) => {
+    if (child instanceof THREE.Mesh) 
+        
+        if (child.geometry && child.geometry.attributes.position && child.geometry.attributes.position.array) {
+            console.log(child.geometry.attributes.position)
+            meshes.push(child)
+        //     const posAttr = child.geometry.attributes.position
+        //     if (posAttr.count > 0 && posAttr.array && posAttr.array.length > 0) {
+        //         meshes.push(child)
+        //     }
+        //     else {
+        //         console.log('Плохая геометрия у меша', child)
+        //     }
+        // }
+        //     else {
+        //         console.log('Меш без геометрии', child)
+            }
+        
+        
+        
+        
+        
+        
+})
+console.log(meshes)
+console.log(raycaster)
+
+const threeJsIntersects = raycaster.intersectObjects(meshes)
+console.log(threeJsIntersects)
+// Создаем визуализацию луча
+const arrowHelper = new THREE.ArrowHelper(
+    raycaster.ray.direction,           // направление
+    raycaster.ray.origin,               // начало
+    10,                                 // длина
+    0xff0000                            // красный цвет
+)
+
+// Добавляем на сцену
+this._scene.add(arrowHelper)
+
+// Удаляем через 1 секунду (чтобы не засорять сцену)
+setTimeout(() => {
+    if (!this._camera || !this._renderer || !this._scene) return
+    this._scene.remove(arrowHelper)
+}, 1000)
+
+
+
+
+
+
+                //рейкаст для моделей
+
+                this._camera?.updateMatrixWorld()
+                this._camera?.updateProjectionMatrix()
+
+                if (!this._fragments) {
+                    console.log('нет фрагментов')
+                    return
+                }
+
+                for (const [, model] of this._fragments.models.list) {
+                    if (!this._camera || !this._renderer || !this._scene) continue
+                
+                    console.log(model)
                     const promises: Promise<FRAGS.RaycastResult | null>[] = []
                     promises.push(
                         model.raycast({
@@ -346,8 +430,11 @@ class PropertiesEditor {
                             dom: this._renderer?.domElement
                         })
                     )
-                    
+
+
                     const results = await Promise.all(promises)
+                    console.log([this._camera.far, this._camera.near])
+                    console.log('РЕЗУЛЬТАТ RAYCAST:', results)
 
                     let smallerDistance = Infinity
                     for (const current of results) {
@@ -360,7 +447,10 @@ class PropertiesEditor {
                     }
                 }
 
-                if (!result) return
+                if (!result) {
+                    console.log('нет результата')
+                    return
+                }
 
                 const [element] = await this._fragments.editor.getElements(this._modelId!, [result.localId])
 
@@ -370,6 +460,14 @@ class PropertiesEditor {
                 if (!element) return
 
                 this.currentMesh = await element.getMeshes()
+                
+                if (this._model) {
+                    const worldMatrix = this._model.object.matrixWorld
+                    console.log(worldMatrix)
+                    
+                    this.currentMesh.applyMatrix4(worldMatrix)
+                }
+
                 this.currentMesh.traverse((child) => {
                     if (child instanceof THREE.Mesh) {
                         const mat = child.material  as THREE.MeshLambertMaterial
@@ -378,15 +476,21 @@ class PropertiesEditor {
                     }
                 })
 
+                
                 this._scene!.add(this.currentMesh)
-
+                
                 this.updatePropertiesTable()
+                console.log('feee', this.currentElement)
             })
+
+
 
             window.addEventListener('keydown', async(event) => {
                 if (event.key === 'Escape') {
-                    if (!this.currentElement) return
-
+                    if (!this.currentElement || !this._fragments) {
+                        console.log('чего то нет')
+                        return
+                    }
                     if(this.currentElement && this.currentMesh) {
                         this.currentElement.disposeMeshes(this.currentMesh)
                     }
@@ -399,6 +503,8 @@ class PropertiesEditor {
                     await this._fragments.update(true)
                     this.currentElement = null
                     this.updatePropertiesTable()
+
+                    this.onPropertiesUpdated.trigger([])
                 }
             })
         }

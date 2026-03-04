@@ -3,25 +3,46 @@ import * as OBC from '@thatopen/components'
 import type { TTableData } from '../editing/usePropertiesEditor'
 import { editor } from '../editing/usePropertiesEditor'
 import { modelStore } from '../store/model-store'
-
+import { useEffect, useRef, useState } from 'react'
 
 
 BUI.Manager.init()
-editor.init()
 
-const propertiesTable = document.createElement('bim-table') as BUI.Table<TTableData>
-propertiesTable.headersHidden = true
-propertiesTable.expanded = true
-propertiesTable.hiddenColumns = ['localId', 'type', 'parentLocalId', 'parentName']
+// const propertiesTable = document.createElement('bim-table') as BUI.Table<TTableData>
+// propertiesTable.headersHidden = true
+// propertiesTable.expanded = true
+// propertiesTable.hiddenColumns = ['localId', 'type', 'parentLocalId', 'parentName']
 
-const model = modelStore.getModel()
-
-const onCloseAddItemModal = new OBC.Event<void>()
+// const model = modelStore.getModel()
 
 
 
-//окно для добавления новых элементов отношения
+
+const AddItemModal:React.FC = () => {
+
+    const modalRef = useRef<HTMLDivElement>(null)
+    const [model, setModel] = useState(modelStore.getModel())
+    const [isOpen, setIsOpen] = useState(false)
+    const onCloseAddItemModalRef = useRef(new OBC.Event<void>())
+
+    //подписываемся на обновление model
+    useEffect(() => {
+        const subscribe = modelStore.subscribe((newModel) => {
+            setModel(newModel)
+        })
+
+        //отписываемся
+        return subscribe
+    }, [])
+
+    const openModal = () => setIsOpen(true)
+
+    useEffect(() => {
+        if (!model) return
+
+     //окно для добавления новых элементов отношения
 const [addItemModal, updateAddItemModal] = BUI.Component.create<HTMLDialogElement, any>((_) => {
+
     const itemIdsDropDownContainer = BUI.Component.create<HTMLDivElement>(() => {
         return BUI.html`<div></div>`
     })
@@ -37,7 +58,7 @@ const [addItemModal, updateAddItemModal] = BUI.Component.create<HTMLDialogElemen
     
     const itemIdsDropDown = BUI.Component.create<BUI.PanelSection>(() => {
         return BUI.html`
-        <bim-dropdown label='Выбрать элемент' multiply @change=${(e: any) => {
+        <bim-dropdown label='Выбрать элемент' multiple @change=${(e: any) => {
             if (!editor.currentRelation) return
             editor.currentRelation.ids = e.target.value as number[]
         }}
@@ -84,8 +105,8 @@ const [addItemModal, updateAddItemModal] = BUI.Component.create<HTMLDialogElemen
         `
     })
 
-    onCloseAddItemModal.reset()
-    onCloseAddItemModal.add(() => {
+    onCloseAddItemModalRef.current.reset()
+    onCloseAddItemModalRef.current.add(() => {
         categoriesDropDown.value = []
         updateAddItemModal()
     })
@@ -109,14 +130,42 @@ const [addItemModal, updateAddItemModal] = BUI.Component.create<HTMLDialogElemen
     `
 }, {})
 
-document.body.appendChild(addItemModal)
+
+if (modalRef.current) {
+    modalRef.current.appendChild(addItemModal)
+}
+
+if (isOpen) {
+    addItemModal.showModal()
+}
 
 addItemModal.addEventListener('close', () => {
-    onCloseAddItemModal.trigger()
+    setIsOpen(false)
+    onCloseAddItemModalRef.current.trigger()
 })
 
-editor.onCategoriesUpdated.add(() => {
-    updateAddItemModal()
-})
-
+const updateHandler = () => updateAddItemModal()
+editor.onCategoriesUpdated.add(updateHandler)
 //обернуть в useRef
+
+return () => {
+    addItemModal.remove()
+    editor.onCategoriesUpdated.remove(updateHandler)
+    onCloseAddItemModalRef.current.reset()
+}
+
+}, [model, isOpen])
+   
+return (
+    <>
+        {/* <button onClick={cate} className='text-white'>Посмотреть категории</button> */}
+        {/* <button onClick={openModal} className='text-white'>Добавить элемент</button> */}
+        <div ref={modalRef} className='absolute left-[500px] top-[100px]' />
+    </>
+)
+
+}
+
+export default AddItemModal
+
+
