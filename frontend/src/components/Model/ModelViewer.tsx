@@ -6,7 +6,7 @@ import useModelLoader from "./viewing/useModelLoader"
 import useSceneSetup from "./viewing/useSceneSetup"
 import useResize from "./viewing/useResize"
 import useModelLoaderIFC from "./viewing/useModelLoaderIFC"
-import AddItemModal from "./editing-UI/propertiesEditor-UI"
+import AddItemModal from "./editing-UI/AddItemModal"
 import { editor } from "./editing/usePropertiesEditor"
 
 interface IModelViewerProps {
@@ -47,12 +47,12 @@ const ModelViewer: React.FC<IModelViewerProps> = ({
         <div className="absolute left-[0] top-[0] w-[100vw] h-[100vh]">
             <div
             ref={containerRef}
-            className='w-full h-full'
+            className='w-[90vw] h-[90vh]'
             >
                 
             </div>
 
-            {/* <AddItemModal /> */}
+            <AddItemModal />
         </div>
     )
 }

@@ -33,6 +33,7 @@ class PropertiesEditor {
         onItemCreated = new OBC.Event<void>()
         onPropertiesUpdated = new OBC.Event<TTableNode[]>()
         onCategoriesUpdated = new OBC.Event<void>()
+        onModelReady = new OBC.Event<FRAGS.FragmentsModel>()
 
 
         // Конфиг данных для каждого элемента: все атрибуты по умолчанию
@@ -93,6 +94,7 @@ class PropertiesEditor {
             this.init()
             this._fragments?.models.list.set(this._model.modelId, this._model)
             this._eventsSetup = false
+            this.onModelReady.trigger(model)
         }
 
         setRenderer(renderer: THREE.WebGLRenderer) {
@@ -337,76 +339,16 @@ class PropertiesEditor {
 
             const canvas = this._renderer.domElement
             canvas.addEventListener('dblclick',  async(event) => {
-                mouse.x = (event.clientX / canvas.clientWidth) * 2 - 1
-                mouse.y = - (event.clientY / canvas.clientHeight) * 2 + 1
+                // mouse.x = (event.clientX / canvas.clientWidth) * 2 - 1
+                // mouse.y = - (event.clientY / canvas.clientHeight) * 2 + 1
+                mouse.x = event.clientX
+                mouse.y = event.clientY
 
                 let result: any
 
                 if (this.currentElement && this.currentMesh) {
                     this.currentElement.disposeMeshes(this.currentMesh)
                 }
-
-
-
-
-if (!this._camera || !this._renderer || !this._scene) return
-
-// Создаем луч из камеры через точку мыши
-const raycaster = new THREE.Raycaster()
-raycaster.setFromCamera(mouse, this._camera)
-raycaster.far = 3000000
-
-const meshes: THREE.Mesh[] = [] 
-this._model?.object.traverse((child) => {
-    if (child instanceof THREE.Mesh) 
-        
-        if (child.geometry && child.geometry.attributes.position && child.geometry.attributes.position.array) {
-            console.log(child.geometry.attributes.position)
-            meshes.push(child)
-        //     const posAttr = child.geometry.attributes.position
-        //     if (posAttr.count > 0 && posAttr.array && posAttr.array.length > 0) {
-        //         meshes.push(child)
-        //     }
-        //     else {
-        //         console.log('Плохая геометрия у меша', child)
-        //     }
-        // }
-        //     else {
-        //         console.log('Меш без геометрии', child)
-            }
-        
-        
-        
-        
-        
-        
-})
-console.log(meshes)
-console.log(raycaster)
-
-const threeJsIntersects = raycaster.intersectObjects(meshes)
-console.log(threeJsIntersects)
-// Создаем визуализацию луча
-const arrowHelper = new THREE.ArrowHelper(
-    raycaster.ray.direction,           // направление
-    raycaster.ray.origin,               // начало
-    10,                                 // длина
-    0xff0000                            // красный цвет
-)
-
-// Добавляем на сцену
-this._scene.add(arrowHelper)
-
-// Удаляем через 1 секунду (чтобы не засорять сцену)
-setTimeout(() => {
-    if (!this._camera || !this._renderer || !this._scene) return
-    this._scene.remove(arrowHelper)
-}, 1000)
-
-
-
-
-
 
                 //рейкаст для моделей
 
@@ -433,8 +375,6 @@ setTimeout(() => {
 
 
                     const results = await Promise.all(promises)
-                    console.log([this._camera.far, this._camera.near])
-                    console.log('РЕЗУЛЬТАТ RAYCAST:', results)
 
                     let smallerDistance = Infinity
                     for (const current of results) {
@@ -480,7 +420,6 @@ setTimeout(() => {
                 this._scene!.add(this.currentMesh)
                 
                 this.updatePropertiesTable()
-                console.log('feee', this.currentElement)
             })
 
 
@@ -488,7 +427,6 @@ setTimeout(() => {
             window.addEventListener('keydown', async(event) => {
                 if (event.key === 'Escape') {
                     if (!this.currentElement || !this._fragments) {
-                        console.log('чего то нет')
                         return
                     }
                     if(this.currentElement && this.currentMesh) {

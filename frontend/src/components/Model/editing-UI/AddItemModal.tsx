@@ -27,18 +27,22 @@ const AddItemModal:React.FC = () => {
 
     //подписываемся на обновление model
     useEffect(() => {
-        const subscribe = modelStore.subscribe((newModel) => {
-            setModel(newModel)
+        editor.onModelReady.add((model) => {
+            setModel(model)
         })
-
-        //отписываемся
-        return subscribe
     }, [])
 
-    const openModal = () => setIsOpen(true)
+    const openModal = () => {
+        setIsOpen(true)
+        console.log('нажал')
+    }
 
     useEffect(() => {
-        if (!model) return
+        if (!model) {
+            console.log('модель не передалась')
+            return
+        }
+
 
      //окно для добавления новых элементов отношения
 const [addItemModal, updateAddItemModal] = BUI.Component.create<HTMLDialogElement, any>((_) => {
@@ -59,7 +63,10 @@ const [addItemModal, updateAddItemModal] = BUI.Component.create<HTMLDialogElemen
     const itemIdsDropDown = BUI.Component.create<BUI.PanelSection>(() => {
         return BUI.html`
         <bim-dropdown label='Выбрать элемент' multiple @change=${(e: any) => {
-            if (!editor.currentRelation) return
+            if (!editor.currentRelation) {
+                console.log('ytf')
+                return
+            }
             editor.currentRelation.ids = e.target.value as number[]
         }}
         </bim-dropdown>
@@ -119,9 +126,12 @@ const [addItemModal, updateAddItemModal] = BUI.Component.create<HTMLDialogElemen
                 ${itemIdsDropDownContainer}
                 <bim-button label='Добавить' @click=${() => {
                     if (editor.currentElement && editor.currentRelation) {
+                        
                         editor.relate().then(() => {
                             addItemModal.close()
                         })
+                    } else {
+                        console.log([editor.currentElement && editor.currentRelation])
                     }
                 }}></bim-button>
             </bim-panel-section>
@@ -137,6 +147,7 @@ if (modalRef.current) {
 
 if (isOpen) {
     addItemModal.showModal()
+    console.log(addItemModal)
 }
 
 addItemModal.addEventListener('close', () => {
@@ -145,7 +156,7 @@ addItemModal.addEventListener('close', () => {
 })
 
 const updateHandler = () => updateAddItemModal()
-editor.onCategoriesUpdated.add(updateHandler)
+editor.onCategoriesUpdated.add(updateHandler) 
 //обернуть в useRef
 
 return () => {
@@ -159,7 +170,7 @@ return () => {
 return (
     <>
         {/* <button onClick={cate} className='text-white'>Посмотреть категории</button> */}
-        {/* <button onClick={openModal} className='text-white'>Добавить элемент</button> */}
+        <button onClick={openModal} className='text-white'>Добавить элемент</button>
         <div ref={modalRef} className='absolute left-[500px] top-[100px]' />
     </>
 )
