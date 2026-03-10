@@ -7,6 +7,7 @@ import useSceneSetup from "./viewing/useSceneSetup"
 import useResize from "./viewing/useResize"
 import useModelLoaderIFC from "./viewing/useModelLoaderIFC"
 import AddItemModal from "./editing-UI/AddItemModal"
+import CreateItemModal from "./editing-UI/CreateItemModal"
 import { editor } from "./editing/usePropertiesEditor"
 
 interface IModelViewerProps {
@@ -53,6 +54,7 @@ const ModelViewer: React.FC<IModelViewerProps> = ({
             </div>
 
             <AddItemModal />
+            <CreateItemModal />
         </div>
     )
 }

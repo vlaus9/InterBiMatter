@@ -24,6 +24,7 @@ const AddItemModal:React.FC = () => {
     const [model, setModel] = useState(modelStore.getModel())
     const [isOpen, setIsOpen] = useState(false)
     const onCloseAddItemModalRef = useRef(new OBC.Event<void>())
+   
 
     //подписываемся на обновление model
     useEffect(() => {
