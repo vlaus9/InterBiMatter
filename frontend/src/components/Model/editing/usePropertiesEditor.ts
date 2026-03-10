@@ -20,7 +20,7 @@ type TTableNode = {
 }
 
 type TAttributeType = {
-    attributName: string;
+    attributeName: string;
     type: string;
     value: string;
 }
@@ -133,7 +133,7 @@ class PropertiesEditor {
         //добавляет атрибут пустышку
         addEmptyAttribute() {
             this.currentAttributes.push({
-                attributName: '',
+                attributeName: '',
                 type: '',
                 value: ''
             })
@@ -236,8 +236,8 @@ class PropertiesEditor {
             const guid = THREE.MathUtils.generateUUID()
 
             for (const attribute of this.currentAttributes) {
-                if (attribute.attributName && attribute.value) {
-                    data[attribute.attributName] = {
+                if (attribute.attributeName && attribute.value) {
+                    data[attribute.attributeName] = {
                         type: attribute.type,
                         value: attribute.value
                     }
