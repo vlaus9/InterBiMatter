@@ -8,15 +8,6 @@ import { useEffect, useRef, useState } from 'react'
 
 BUI.Manager.init()
 
-// const propertiesTable = document.createElement('bim-table') as BUI.Table<TTableData>
-// propertiesTable.headersHidden = true
-// propertiesTable.expanded = true
-// propertiesTable.hiddenColumns = ['localId', 'type', 'parentLocalId', 'parentName']
-
-// const model = modelStore.getModel()
-
-
-
 
 const AddItemModal:React.FC = () => {
 
