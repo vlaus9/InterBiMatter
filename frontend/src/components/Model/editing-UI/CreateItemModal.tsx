@@ -130,7 +130,7 @@ const CreateItemModal: React.FC = () => {
 
 return (
     <>
-        <button onClick={openModal} className='text-white'>Создать элемент</button>
+        <button onClick={openModal} className='text-white m-[10px]'>Создать элемент</button>
         <div ref={modalRef} className='absolute top-[50%] right-[10%]'></div>
     </>
 )}

@@ -6,10 +6,34 @@ import { modelStore } from '../store/model-store'
 
 BUI.Manager.init()
 
-const [model, setModel] = useState(modelStore.getModel())
-const onCloseAddRelationModal = new OBC.Event<void>()
 
-const [addRelationModal, updateAddRelationModal] = BUI.Component.create<HTMLDialogElement, any>((_) => {
+const AddRelationModal: React.FC = () => {
+
+    const modalRef = useRef<HTMLDivElement>(null)
+    const [model, setModel] = useState(modelStore.getModel())
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+    const onCloseAddRelationModalRef = useRef(new OBC.Event<void>())
+
+    useEffect(() => {
+        editor.onModelReady.add((model) => {
+            setModel(model)
+        })
+    }, [])
+
+    const openModal = () => {
+        setIsOpen(true)
+        console.log('нажал')
+    }
+
+
+    useEffect(() => {
+
+        if (!model) {
+            console.log('Модель не передалась')
+            return
+        }
+
+    const [addRelationModal, updateAddRelationModal] = BUI.Component.create<HTMLDialogElement, any>((_) => {
 
     const itemsIdsDropdownContainer = BUI.Component.create<HTMLDivElement>(() => {
         return BUI.html`
@@ -83,8 +107,8 @@ const [addRelationModal, updateAddRelationModal] = BUI.Component.create<HTMLDial
         `
     })
 
-    onCloseAddRelationModal.reset()
-    onCloseAddRelationModal.add(() => {
+    onCloseAddRelationModalRef.current.reset()
+    onCloseAddRelationModalRef.current.add(() => {
         categoriesDropdown.value = []
         updateAddRelationModal()
     })
@@ -111,8 +135,33 @@ const [addRelationModal, updateAddRelationModal] = BUI.Component.create<HTMLDial
             </bim-panel>
         </dialog>
     `
-}, {})
+    }, {})
 
-addRelationModal.addEventListener('close', () => {
-    onCloseAddRelationModal.trigger()
-})
+    if (modalRef.current) {
+        modalRef.current.appendChild(addRelationModal)
+    }
+
+    if (isOpen) {
+        addRelationModal.showModal()
+    }
+
+    addRelationModal.addEventListener('close', () => {
+        onCloseAddRelationModalRef.current.trigger()
+    })
+
+    return () => {
+        addRelationModal.remove()
+        onCloseAddRelationModalRef.current.reset()
+    }
+    }, [model, isOpen])
+
+    return (
+        <>
+            <button onClick={openModal} className='m-[10px] text-white'>Добавить связь</button>
+            <div ref={modalRef} className='absolute top-[30px] left-[200px]'></div>
+        </>
+    )
+}
+
+export default AddRelationModal
+
