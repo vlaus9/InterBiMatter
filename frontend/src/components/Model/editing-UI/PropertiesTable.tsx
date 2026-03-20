@@ -4,18 +4,29 @@ import { useEffect, useRef, useState } from 'react'
 import { modelStore } from '../store/model-store'
 import { editor } from '../editing/usePropertiesEditor'
 import AddItemModal from './AddItemModal'
+import AddRelationModal from './AddRelationModal'
+import CreateItemModal from './CreateItemModal'
 
-
+BUI.Manager.init()
 
 const PropertiesTable: React.FC = () => {
 
+    const panelPropertiesRef = useRef<HTMLDivElement>(null)
     const [model, setModel] = useState(modelStore.getModel())
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+
 
 useEffect(() => {
     editor.onModelReady.add((model) => {
         setModel(model)
     })
 }, [])
+
+const openTable = () => {
+    setIsOpen(true)
+    console.log(panelPropertiesRef)
+}
+
 
 useEffect(() => {
     if (!model) {
@@ -24,6 +35,7 @@ useEffect(() => {
     }
 
     const propertiesTable = document.createElement('bim-table') as BUI.Table<TTableData>
+    propertiesTable.className = 'w-[300px] h-[300px] bg-[green] text-white'
     propertiesTable.headersHidden = true
     propertiesTable.expanded = true
     propertiesTable.hiddenColumns = ['localId', 'type', 'parentLocalId', 'parentName']
@@ -78,16 +90,89 @@ useEffect(() => {
                                     ids: []
                                 }
                             }
-                        }}>
-                        $${AddRelatio}
+                        }}></bim-button>
+                        ${AddRelationModal}
                     </div>
                 `
             }
 
+            return value
+        },
+        value: (value: any, row: Partial<TTableData>) => {
+ 
+            if (!row.itemName || row.itemName[0] === '_') {
+                return value
+            }
+
+            if (typeof value === 'string') {
+                return BUI.html`
+                    <bim-text-input value=${value} @input=${(e: any) => {
+                        editor.updateAttribute(row, e)
+                    }}></bim-text-input>
+                `
+            }
+
+            return BUI.html`
+                <bim-checkbox ?checked=${value} @change=${(e: any) => {
+                    editor.updateAttribute(row, e)
+                }}></bim-checkbox>
+            `
         }
     }
 
+    //кнопка обновления таблицы свойств
+    const updateTableButton = BUI.Component.create<BUI.Button>(() => {
+        return BUI.html`
+            <bim-button label='Добавить изменения' @click=${() => {
+                editor.applyChanges()
+            }}></bim-button>
+        `
+    })
 
-}, [])
+
+    editor.onPropertiesUpdated.add((data) => {
+        propertiesTable.data = data
+        const tableVisible = propertiesTable.data.length > 0
+        updateTableButton.style.display = tableVisible ? 'block' : 'none'
+    })
+
+
+    //панель управления
+    const [panelProperties] = BUI.Component.create<BUI.PanelSection, any>((_) => {
+        return BUI.html`
+            <bim-panel style='min-width:25rem' id='controls-panel' active label='Редактор элемента' class='options-menu'>
+                <bim-panel-section label='Элементы управления'>
+                    <bim-button label='Создать новый элемент"></bim-button>
+                    <CreateItemModal />
+
+                    ${updateTableButton}
+                    ${propertiesTable}
+                </bim-panel-section>
+            </bim-panel>
+        `
+    }, {})
+
+    if (panelPropertiesRef.current) {
+        panelPropertiesRef.current.appendChild(panelProperties)
+    }
+
+
+    return () => {
+        propertiesTable.remove()
+        panelProperties.remove()
+    }
+
+}, [model, isOpen])
+
+
+    return (
+        <>
+            <button onClick={openTable} className='text-white m-[10px]'>Открыть таблицу</button>
+            <div ref={panelPropertiesRef} className='absolute top-[10px] w-[500px] h-[500px] z-[1000]'></div>
+            <CreateItemModal />
+        </>
+    )
 
 }
+
+export default PropertiesTable

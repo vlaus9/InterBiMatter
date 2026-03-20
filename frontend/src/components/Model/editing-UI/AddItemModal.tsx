@@ -163,7 +163,7 @@ return (
     <>
         {/* <button onClick={cate} className='text-white'>Посмотреть категории</button> */}
         <button onClick={openModal} className='text-white'>Добавить элемент</button>
-        <div ref={modalRef} className='absolute left-[500px] top-[100px]' />
+        <div ref={modalRef} className='absolute left-[500px] top-[500px] bg-white' />
     </>
 )
 

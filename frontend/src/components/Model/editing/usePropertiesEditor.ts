@@ -363,7 +363,6 @@ class PropertiesEditor {
                 for (const [, model] of this._fragments.models.list) {
                     if (!this._camera || !this._renderer || !this._scene) continue
                 
-                    console.log(model)
                     const promises: Promise<FRAGS.RaycastResult | null>[] = []
                     promises.push(
                         model.raycast({
@@ -403,7 +402,6 @@ class PropertiesEditor {
                 
                 if (this._model) {
                     const worldMatrix = this._model.object.matrixWorld
-                    console.log(worldMatrix)
                     
                     this.currentMesh.applyMatrix4(worldMatrix)
                 }
@@ -420,6 +418,8 @@ class PropertiesEditor {
                 this._scene!.add(this.currentMesh)
                 
                 this.updatePropertiesTable()
+
+                console.log(this.currentElement.getRequests())
             })
 
 
