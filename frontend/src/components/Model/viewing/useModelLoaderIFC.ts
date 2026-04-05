@@ -120,7 +120,6 @@ const useModelLoaderIFC = (
                                     resolve(box)
                                     //отправляем в состояние
                                     setBox(box)
-                                    console.log(box)
                                     //настраиваем модель и камеру
                                     setupModelAndCamera(box, model)
                                     setUpdateModel(true)
@@ -164,7 +163,6 @@ const useModelLoaderIFC = (
     
                         const newSphere = box.getBoundingSphere(new THREE.Sphere())
                         const radius = newSphere.radius
-                        console.log(radius)
                     
                         camera.position.set(radius / 5, radius / 5, radius / 5)
                         camera.lookAt(0, 0, 0)

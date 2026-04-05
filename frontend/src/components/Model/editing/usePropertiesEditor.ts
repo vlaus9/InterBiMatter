@@ -2,7 +2,7 @@ import * as OBC from '@thatopen/components'
 import * as FRAGS from '@thatopen/fragments'
 import * as THREE from 'three'
 import { workerUrlStore } from '../store/workerUrl-store'
-import { all } from 'axios'
+
 
 
 export type TTableData = {
@@ -75,6 +75,12 @@ class PropertiesEditor {
         private _scene: THREE.Scene | null = null
         private _worker: string = ''
         private _eventsSetup: boolean = false
+
+
+
+
+        //окно информации об элементе
+        public informationSelectedItem: ((data: any) => void) | null = null
 
 
         async init() {
@@ -416,10 +422,16 @@ class PropertiesEditor {
 
                 
                 this._scene!.add(this.currentMesh)
+
+
+                const currentElementData = await this.currentElement.getData()
+
+                if (this.informationSelectedItem) {
+                    this.informationSelectedItem(currentElementData)
+                }
+
                 
                 this.updatePropertiesTable()
-
-                console.log(this.currentElement.getRequests())
             })
 
 

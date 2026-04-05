@@ -17,7 +17,6 @@ const RouteProject: React.FC = () => {
     // }
     
     const modelUrl = project?.modelPath
-    console.log(modelUrl)
 
     return (
     <ProtectedRoute>

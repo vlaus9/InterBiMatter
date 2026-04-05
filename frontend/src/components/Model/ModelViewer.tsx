@@ -2,7 +2,6 @@ import { useRef } from "react"
 import useThreeScene from "./viewing/useThreeScene"
 import useCamera from "./viewing/useCamera"
 import useAnimation from "./viewing/useAnimation"
-import useModelLoader from "./viewing/useModelLoader"
 import useSceneSetup from "./viewing/useSceneSetup"
 import useResize from "./viewing/useResize"
 import useModelLoaderIFC from "./viewing/useModelLoaderIFC"
@@ -50,15 +49,17 @@ const ModelViewer: React.FC<IModelViewerProps> = ({
         <div className="absolute left-[0] top-[0] w-[100vw] h-[100vh]">
             <div
             ref={containerRef}
-            className='w-[90vw] h-[90vh]'
+            className='w-full h-full'
             >
                 
             </div>
-{/* 
-            <AddItemModal />
+
+
+            {/* пока отложим */}
+            {/* <AddItemModal />
             <CreateItemModal />
-            <AddRelationModal /> */}
-            <PropertiesTable />
+            <AddRelationModal />
+            <PropertiesTable /> */}
         </div>
     )
 }

@@ -74,7 +74,6 @@ export const openProject = createAsyncThunk(
             const project = await axios.get<IProjectResponse>(
                 `http://localhost:80/api/project/getProject/${projectId}`,
             )
-            console.log(project.data.data.project)
             return project.data
         } catch (error: any) {
             const errorMessage = error.response.data.message

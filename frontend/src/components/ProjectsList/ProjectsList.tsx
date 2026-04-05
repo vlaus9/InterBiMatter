@@ -12,7 +12,6 @@ const ProjectsList: React.FC = () => {
     const navigate = useNavigate()
 
     const openProjectClick = (id: string) => {
-        console.log(id)
         dispatch(openProject(id))
         navigate('/')
     }
