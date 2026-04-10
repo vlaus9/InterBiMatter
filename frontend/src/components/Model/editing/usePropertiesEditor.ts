@@ -5,6 +5,7 @@ import { workerUrlStore } from '../store/workerUrl-store'
 
 
 
+
 export type TTableData = {
     itemName: string;
     value?: string | number | boolean;
@@ -61,11 +62,6 @@ class PropertiesEditor {
 
         allCategories: string[] = []
 
-        // private _world: OBC.World;
-        // constructor(world: OBC.World) {
-        //     this._world = world;
-        //     this.setupEvents()
-        // } РАЗОБРАТЬСЯ И ПЕРЕДЕЛАТЬ ПОД three
 
         private _model: FRAGS.FragmentsModel | null = null
         private _modelId: string | null = null
@@ -81,6 +77,10 @@ class PropertiesEditor {
 
         //окно информации об элементе
         public informationSelectedItem: ((data: any) => void) | null = null
+        public closeInformationSelectedItem: (() => void) | null = null
+
+        //список элементов модели
+        public elementsModelList: ((data: any) => void) | null = null
 
 
         async init() {
@@ -134,208 +134,6 @@ class PropertiesEditor {
             this._fragments = new FRAGS.FragmentsModels(this._worker)
         }
 
-
-
-        //добавляет атрибут пустышку
-        addEmptyAttribute() {
-            this.currentAttributes.push({
-                attributeName: '',
-                type: '',
-                value: ''
-            })
-        }
-
-        //удаляем атрибут
-        deleteAttribute(attribute : TAttributeType) {
-            const index = this.currentAttributes.indexOf(attribute)
-            this.currentAttributes.splice(index, 1)
-        }
-
-        //обновляем атрибут
-        updateAttribute(row: Partial<TTableData>, e: any) {
-
-            if (!this.currentElement) {
-                return
-            }
-
-            const localId = row.localId
-
-            if (localId === undefined) {
-                throw new Error('LocalId является undefined')
-            }
-
-            const item = this.itemsDataById.get(localId)
-
-            if (!item) {
-                throw new Error(`Элемент ${localId} не найден`)
-            }
-
-            const attr = item[row.itemName!] as FRAGS.ItemAttribute
-            attr.value = e.target.value
-            this.updatedItems.add(localId)
-        }
-
-        //обновляем таблицу свойств в пользовательском интерфейсе
-        updatePropertiesTable = async() => {
-            if (!this.currentElement) return
-        
-        this.itemsDataById.clear()
-        this.updatedItems.clear()
-        const data = await this.currentElement.getData()
-        const rootNode = this.getTableRecursively(data)
-        this.onPropertiesUpdated.trigger([rootNode])
-        }
-
-        //применение изменений
-        async applyChanges() {
-            if (!this.currentElement || !this._fragments || !this._modelId) return
-
-            for (const localId of this.updatedItems) {
-
-                const item = this.itemsDataById.get(localId)
-
-                if (!item) {
-                    throw new Error(`Элемент ${localId} не найден`)
-                }
-
-            this._fragments.editor.setItem(this._modelId, item)
-            }
-
-            await this._fragments.editor.applyChanges(this._modelId)
-
-            if (this.currentElement && this.currentMesh) {
-                this.currentElement.disposeMeshes(this.currentMesh)
-            }
-
-            this.onPropertiesUpdated.trigger([])
-            this.itemsDataById.clear()
-
-            await this._fragments.update(true)
-
-            this.currentElement = null
-            this.updatePropertiesTable()
-        }
-
-        //добавить связь
-        async relate() {
-           if (!this.currentRelation || !this._fragments || !this._modelId) return
-           const { id, name, ids } = this.currentRelation
-           await this._fragments.editor.relate(this._modelId, id, name, ids)
-           await this._fragments.editor.applyChanges(this._modelId)
-           await this.updatePropertiesTable()
-        }
-
-        //удалить связь
-        async unrelate(){
-            if (!this.currentRelation || !this._fragments || !this._modelId) return
-            const { id, name, ids } = this.currentRelation
-            await this._fragments.editor.unrelate(this._modelId, id, name, ids)
-            await this._fragments.editor.applyChanges(this._modelId)
-            await this.updatePropertiesTable()
-        }
-
-        //создать элемент
-        async createItem() {
-            if (!this.currentCategories || !this._fragments || !this._model || !this._modelId) return
-            
-            const data: Record<string, FRAGS.ItemAttribute> = {}
-            const guid = THREE.MathUtils.generateUUID()
-
-            for (const attribute of this.currentAttributes) {
-                if (attribute.attributeName && attribute.value) {
-                    data[attribute.attributeName] = {
-                        type: attribute.type,
-                        value: attribute.value
-                    }
-                }
-            }
-            
-            this._fragments.editor.createItem(this._modelId, {
-                data,
-                category: this.currentCategories,
-                guid,
-            })
-
-            await this._fragments.editor.applyChanges(this._modelId)
-
-            this.allCategories = await this._model.getCategories()
-            this.onCategoriesUpdated.trigger()
-
-            this.onItemCreated.trigger()
-        }
-
-        //удалить элемент
-        async deleteItem(localId: number) {
-            if (!this.currentElement || !this._fragments || !this._modelId) return
-            await this._fragments.editor.deleteData(this._modelId, {
-                itemIds: [localId],
-            })
-
-            await this._fragments.editor.applyChanges(this._modelId)
-            await this.updatePropertiesTable()
-        }
-
-        //формирование древа связей элемента
-        private getTableRecursively(data: FRAGS.ItemData, parent?: TTableNode) {
-            const localId = (data._localId as FRAGS.ItemAttribute).value
-            this.itemsDataById.set(localId, data)
-
-            const currentNode: TTableNode = {
-                data: {
-                    itemName: localId,
-                    localId: localId,
-                    type: 'related'
-                },
-                children: []
-            }
-
-            //если есть родитель, записываем в родители
-            if (parent) {
-                parent.children!.push(currentNode)
-                currentNode.data.parentLocalId = parent.data.localId
-                currentNode.data.parentName = parent.data.itemName
-            }
-        
-
-            for (const valueName in data) {
-                const current = data[valueName]
-
-                //если массив, значит это связь и формируем продолжение ветки связей
-                if (Array.isArray(current)) {
-                    const relNode: TTableNode = {
-                        data: {
-                            itemName: valueName,
-                            localId: localId,
-                            type: 'relation'
-                        },
-                        children: []
-                    }
-
-                    currentNode.children!.push(relNode)
-                    for (const item of current) {
-                        this.getTableRecursively(item, relNode)
-                    }
-                } else {
-                    //если пустое значение значит пропускам
-                    if (current.value === undefined || current.value === null) {
-                        continue
-                    }
-                    //если служебное поле значит пропускаем 
-                    if (valueName.startsWith('_')) {
-                        continue
-                    }
-                    currentNode.children!.push({
-                        data: {
-                            itemName: valueName,
-                            value: current.value,
-                            localId: localId
-                            
-                        }
-                    })
-                } 
-            }
-            return currentNode
-        }
 
         //события кликов: два клика - выделить объект, esc - сбросить выделение
         private setupEvents() {
@@ -423,7 +221,6 @@ class PropertiesEditor {
                 
                 this._scene!.add(this.currentMesh)
 
-
                 const currentElementData = await this.currentElement.getData()
 
                 if (this.informationSelectedItem) {
@@ -431,7 +228,7 @@ class PropertiesEditor {
                 }
 
                 
-                this.updatePropertiesTable()
+                // this.updatePropertiesTable()
             })
 
 
@@ -445,6 +242,10 @@ class PropertiesEditor {
                         this.currentElement.disposeMeshes(this.currentMesh)
                     }
 
+                    if (this.closeInformationSelectedItem) {
+                        this.closeInformationSelectedItem()
+                    }
+
                     this.currentElement.getRequests()
 
                     this.currentAttributes = []
@@ -452,13 +253,232 @@ class PropertiesEditor {
                     this.itemsDataById.clear()
                     await this._fragments.update(true)
                     this.currentElement = null
-                    this.updatePropertiesTable()
-
+                    // this.updatePropertiesTable()
                     this.onPropertiesUpdated.trigger([])
                 }
             })
+
+        }
+
+            //получение списка элементов модели
+        public async getElementsModel() {
+             if (!this._modelId) return
+
+            const model = this._fragments?.models.list.get(this._modelId)
+
+            if (!model) return
+
+            const elementsIds = await model.getItemsIds()
+            const elementsList = await model.getItemsData(elementsIds)
+                
+            if (this.elementsModelList) {
+                this.elementsModelList(elementsList)
+            }
         }
     }
 
 export const editor = new PropertiesEditor()
     
+
+
+
+// //добавляет атрибут пустышку
+//         addEmptyAttribute() {
+//             this.currentAttributes.push({
+//                 attributeName: '',
+//                 type: '',
+//                 value: ''
+//             })
+//         }
+
+//         //удаляем атрибут
+//         deleteAttribute(attribute : TAttributeType) {
+//             const index = this.currentAttributes.indexOf(attribute)
+//             this.currentAttributes.splice(index, 1)
+//         }
+
+//         //обновляем атрибут
+//         updateAttribute(row: Partial<TTableData>, e: any) {
+
+//             if (!this.currentElement) {
+//                 return
+//             }
+
+//             const localId = row.localId
+
+//             if (localId === undefined) {
+//                 throw new Error('LocalId является undefined')
+//             }
+
+//             const item = this.itemsDataById.get(localId)
+
+//             if (!item) {
+//                 throw new Error(`Элемент ${localId} не найден`)
+//             }
+
+//             const attr = item[row.itemName!] as FRAGS.ItemAttribute
+//             attr.value = e.target.value
+//             this.updatedItems.add(localId)
+//         }
+
+//         //обновляем таблицу свойств в пользовательском интерфейсе
+//         updatePropertiesTable = async() => {
+//             if (!this.currentElement) return
+        
+//         this.itemsDataById.clear()
+//         this.updatedItems.clear()
+//         const data = await this.currentElement.getData()
+//         const rootNode = this.getTableRecursively(data)
+//         this.onPropertiesUpdated.trigger([rootNode])
+//         }
+
+//         //применение изменений
+//         async applyChanges() {
+//             if (!this.currentElement || !this._fragments || !this._modelId) return
+
+//             for (const localId of this.updatedItems) {
+
+//                 const item = this.itemsDataById.get(localId)
+
+//                 if (!item) {
+//                     throw new Error(`Элемент ${localId} не найден`)
+//                 }
+
+//             this._fragments.editor.setItem(this._modelId, item)
+//             }
+
+//             await this._fragments.editor.applyChanges(this._modelId)
+
+//             if (this.currentElement && this.currentMesh) {
+//                 this.currentElement.disposeMeshes(this.currentMesh)
+//             }
+
+//             this.onPropertiesUpdated.trigger([])
+//             this.itemsDataById.clear()
+
+//             await this._fragments.update(true)
+
+//             this.currentElement = null
+//             this.updatePropertiesTable()
+//         }
+
+//         //добавить связь
+//         async relate() {
+//            if (!this.currentRelation || !this._fragments || !this._modelId) return
+//            const { id, name, ids } = this.currentRelation
+//            await this._fragments.editor.relate(this._modelId, id, name, ids)
+//            await this._fragments.editor.applyChanges(this._modelId)
+//            await this.updatePropertiesTable()
+//         }
+
+//         //удалить связь
+//         async unrelate(){
+//             if (!this.currentRelation || !this._fragments || !this._modelId) return
+//             const { id, name, ids } = this.currentRelation
+//             await this._fragments.editor.unrelate(this._modelId, id, name, ids)
+//             await this._fragments.editor.applyChanges(this._modelId)
+//             await this.updatePropertiesTable()
+//         }
+
+//         //создать элемент
+//         async createItem() {
+//             if (!this.currentCategories || !this._fragments || !this._model || !this._modelId) return
+            
+//             const data: Record<string, FRAGS.ItemAttribute> = {}
+//             const guid = THREE.MathUtils.generateUUID()
+
+//             for (const attribute of this.currentAttributes) {
+//                 if (attribute.attributeName && attribute.value) {
+//                     data[attribute.attributeName] = {
+//                         type: attribute.type,
+//                         value: attribute.value
+//                     }
+//                 }
+//             }
+            
+//             this._fragments.editor.createItem(this._modelId, {
+//                 data,
+//                 category: this.currentCategories,
+//                 guid,
+//             })
+
+//             await this._fragments.editor.applyChanges(this._modelId)
+
+//             this.allCategories = await this._model.getCategories()
+//             this.onCategoriesUpdated.trigger()
+
+//             this.onItemCreated.trigger()
+//         }
+
+//         //удалить элемент
+//         async deleteItem(localId: number) {
+//             if (!this.currentElement || !this._fragments || !this._modelId) return
+//             await this._fragments.editor.deleteData(this._modelId, {
+//                 itemIds: [localId],
+//             })
+
+//             await this._fragments.editor.applyChanges(this._modelId)
+//             await this.updatePropertiesTable()
+//         }
+
+//         //формирование древа связей элемента
+//         private getTableRecursively(data: FRAGS.ItemData, parent?: TTableNode) {
+//             const localId = (data._localId as FRAGS.ItemAttribute).value
+//             this.itemsDataById.set(localId, data)
+
+//             const currentNode: TTableNode = {
+//                 data: {
+//                     itemName: localId,
+//                     localId: localId,
+//                     type: 'related'
+//                 },
+//                 children: []
+//             }
+
+//             //если есть родитель, записываем в родители
+//             if (parent) {
+//                 parent.children!.push(currentNode)
+//                 currentNode.data.parentLocalId = parent.data.localId
+//                 currentNode.data.parentName = parent.data.itemName
+//             }
+        
+
+//             for (const valueName in data) {
+//                 const current = data[valueName]
+
+//                 //если массив, значит это связь и формируем продолжение ветки связей
+//                 if (Array.isArray(current)) {
+//                     const relNode: TTableNode = {
+//                         data: {
+//                             itemName: valueName,
+//                             localId: localId,
+//                             type: 'relation'
+//                         },
+//                         children: []
+//                     }
+
+//                     currentNode.children!.push(relNode)
+//                     for (const item of current) {
+//                         this.getTableRecursively(item, relNode)
+//                     }
+//                 } else {
+//                     //если пустое значение значит пропускам
+//                     if (current.value === undefined || current.value === null) {
+//                         continue
+//                     }
+//                     //если служебное поле значит пропускаем 
+//                     if (valueName.startsWith('_')) {
+//                         continue
+//                     }
+//                     currentNode.children!.push({
+//                         data: {
+//                             itemName: valueName,
+//                             value: current.value,
+//                             localId: localId
+                            
+//                         }
+//                     })
+//                 } 
+//             }
+//             return currentNode
+//         }

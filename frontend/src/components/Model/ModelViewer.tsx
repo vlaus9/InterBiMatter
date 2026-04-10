@@ -10,6 +10,8 @@ import CreateItemModal from "./editing-UI/CreateItemModal"
 import AddRelationModal from "./editing-UI/AddRelationModal"
 import PropertiesTable from "./editing-UI/PropertiesTable"
 import { editor } from "./editing/usePropertiesEditor"
+import InfoCurrentElement from "./info-UI/InfoCurrentElement"
+import ElementsModelList from "./info-UI/ElementsModelList"
 
 interface IModelViewerProps {
     modelUrl: string,
@@ -49,8 +51,11 @@ const ModelViewer: React.FC<IModelViewerProps> = ({
         <div className="absolute left-[0] top-[0] w-[100vw] h-[100vh]">
             <div
             ref={containerRef}
-            className='w-full h-full'
+            className='relative w-full h-full'
             >
+
+                <InfoCurrentElement />
+                {/* <ElementsModelList /> */}
                 
             </div>
 

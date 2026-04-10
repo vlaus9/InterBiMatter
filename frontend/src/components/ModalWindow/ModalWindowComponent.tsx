@@ -6,6 +6,9 @@ import { CloseOutlined } from '@ant-design/icons'
 import { useAppSelector, useAppDispatch } from "../../app/hooks"
 import { isClosed } from "./slices/isOpenModalWindowSlice"
 import './styles/ModalWindowStyles.css'
+import { ModalWindowComponentsData } from "./data/ModalWindowComponentsData"
+import ElementsModelList from "../Model/info-UI/ElementsModelList"
+
 
 
 export interface IModalWindowProps {
@@ -18,6 +21,10 @@ const ModalWindowComponent: React.FC<IModalWindowProps> = ({ config }) => {
     const { onResizeStart, onDragStart } = useDragResize(handleResize, handleDrag)
     const { isOpen } = useAppSelector((state) => state.isOpenModalWindowSlice)
     const dispatch = useAppDispatch()
+
+  
+    const currentContentData = config.contentData
+    const CurrentContentDataComponent = ModalWindowComponentsData.get(currentContentData)
 
     if (!isOpen) return
 
@@ -42,8 +49,12 @@ const ModalWindowComponent: React.FC<IModalWindowProps> = ({ config }) => {
                         setTimeout(() => dispatch(isClosed()), 90)
                         }}/>
                </header>
+                
+                {CurrentContentDataComponent} 
+
 
                <ModalWindowDraggingFrame onResizeStart={onResizeStart} />
+
                 
             </div>
         </>

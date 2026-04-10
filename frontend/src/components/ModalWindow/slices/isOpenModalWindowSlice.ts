@@ -5,7 +5,7 @@ const initialState: IModalWindow = {
     id: null,
     name: null,
     contenType: null,
-    contentData: null,
+    contentData: '',
     isOpen: false
 }
 

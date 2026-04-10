@@ -5,7 +5,7 @@ import ModalWindowComponent from '../../ModalWindow/ModalWindowComponent'
 import Profile from "../../Profile/Profile"
 import { Navigate } from "react-router"
 import type { NavigateFunction } from "react-router"
- 
+
 
 export const SmartButtonDataAttribut: ISmartButtonData = [
     {

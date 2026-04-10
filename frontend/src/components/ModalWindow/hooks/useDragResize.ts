@@ -12,8 +12,13 @@ const useDragResize = (
 
         let startX = e.clientX
         let startY = e.clientY
+        let rafId: number | null = null
 
         const handleMouseMove = (moveEvent: MouseEvent) => {
+
+            if (rafId) return 
+
+            rafId = requestAnimationFrame(() => {
 
             const screenWidth = window.innerWidth
             const screenHeight = window.innerHeight
@@ -56,9 +61,17 @@ const useDragResize = (
 
             deltaX = 0
             deltaY = 0
+            rafId = null
+
+            })
         }
 
         const handleMouseUp = () => {
+
+            if (rafId) {
+                cancelAnimationFrame(rafId)
+                rafId = null
+            }
             document.removeEventListener('mousemove', handleMouseMove)
             document.removeEventListener('mouseup', handleMouseUp)
         }
@@ -74,17 +87,29 @@ const useDragResize = (
 
         let startX = e.clientX
         let startY = e.clientY
+        let rafId: number | null = null
 
         const handleMouseMove = (moveEvent: MouseEvent) => {
+
+            if (rafId) return
+
+            rafId = requestAnimationFrame(() => {
+
             const deltaX = moveEvent.clientX - startX
             const deltaY = moveEvent.clientY - startY
             onDrag(deltaX, deltaY)
 
             startX = moveEvent.clientX
             startY = moveEvent.clientY
+            rafId = null
+            })
         }
 
         const handleMouseUp = () => {
+            if (rafId) {
+                cancelAnimationFrame(rafId)
+                rafId = null
+            }
                 document.removeEventListener('mousemove', handleMouseMove)
                 document.removeEventListener('mouseup', handleMouseUp)
             }
