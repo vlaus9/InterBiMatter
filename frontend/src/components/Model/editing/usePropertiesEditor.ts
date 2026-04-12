@@ -218,9 +218,9 @@ class PropertiesEditor {
                     }
                 })
 
-                
                 this._scene!.add(this.currentMesh)
 
+                //получение дата активного элемента для угловой модалки при нажатии
                 const currentElementData = await this.currentElement.getData()
 
                 if (this.informationSelectedItem) {
@@ -274,6 +274,44 @@ class PropertiesEditor {
             if (this.elementsModelList) {
                 this.elementsModelList(elementsList)
             }
+        }
+
+        //метод для подсвечивания элемента при выборе из списка в модалке
+        public selectItemFromTable = async(localId: Iterable<number>) => {
+            if (!this._modelId) return
+            const result = await this._fragments?.editor.getElements(this._modelId, localId)
+            const element = result?.[0]
+
+            if (!element) return
+            this.currentElement = element
+            this.currentElement.config = this.elementsConfig
+
+            this.currentMesh = await element.getMeshes()
+
+            this.currentMesh.traverse((child) => {
+                if (child instanceof THREE.Mesh) {
+                    const mat = child.material as THREE.MeshLambertMaterial
+                    mat.depthTest = false
+                    mat.color.set('gold')
+                }
+            })
+
+            this._scene?.add(this.currentMesh)
+        }
+
+        public resetElementFromTable = async(localId: Iterable<number>) => {
+            if (!this._modelId) return
+            const result = await this._fragments?.editor.getElements(this._modelId, localId)
+            if (!result) return
+            const element = result?.[0]
+            this.currentElement = element
+            this.currentMesh = await this.currentElement.getMeshes()
+            this.currentElement.disposeMeshes(this.currentMesh)
+            await this._fragments?.update(true)
+            // result.map(async(el) => {
+            //     const mesh = await el.getMeshes()
+            //     el.disposeMeshes(mesh)
+            // })
         }
     }
 
