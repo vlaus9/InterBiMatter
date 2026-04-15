@@ -1,26 +1,40 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState: number[] = []
+interface IElementsModelList {
+    selectedElem: number[],
+    isMakeInvisible: boolean
+}
+
+const initialState: IElementsModelList = {
+    selectedElem: [],
+    isMakeInvisible: false
+}
 
 const elementsModelListSlice = createSlice({
     name: 'elementModelListSlice',
     initialState,
     reducers: {
         addElem: (state, action) => {
-            if (!state.includes(action.payload)) {
-                state.push(action.payload)
+            if (!state.selectedElem.includes(action.payload)) {
+                state.selectedElem.push(action.payload)
             }
         },
         delElem: (state, action) => {
-            if (state.includes(action.payload)) {
-               return state.filter(el => el !== action.payload)
+            if (state.selectedElem.includes(action.payload)) {
+               state.selectedElem = state.selectedElem.filter(el => el !== action.payload)
             }
         },
         clearAll: (state) => {
-            return []
+            state.selectedElem = []
+        },
+        invisible: (state) => {
+            state.isMakeInvisible = true
+        },
+        visible: (state) => {
+            state.isMakeInvisible = false
         }
     }
 })
 
-export const { addElem, delElem, clearAll } = elementsModelListSlice.actions
+export const { addElem, delElem, clearAll, invisible, visible } = elementsModelListSlice.actions
 export default elementsModelListSlice.reducer

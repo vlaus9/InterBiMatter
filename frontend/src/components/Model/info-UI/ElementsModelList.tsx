@@ -5,7 +5,7 @@ import { List } from "react-window"
 import type { RowComponentProps } from "react-window"
 import "./style/elementModelList.css"
 import { useAppSelector, useAppDispatch } from "../../../app/hooks"
-import { addElem, delElem, clearAll } from "../slice/elementsModelListSlice"
+import { addElem, delElem, clearAll, invisible, visible } from "../slice/elementsModelListSlice"
 
 type RowData = [string, string, number]
 
@@ -13,7 +13,8 @@ const ElementsModelList: React.FC = () => {
 
     const dispatch = useAppDispatch()
     const [elementsModelList, setElementsModelList] = useState<FRAGS.ItemData[] | null>(null)
-    const selectedItems = useAppSelector<number[]>((state) => state.elementsModelListSlice)
+    const selectedItems = useAppSelector<number[]>((state) => state.elementsModelListSlice.selectedElem)
+    const isMakeInvisible = useAppSelector<boolean>((state) => state.elementsModelListSlice.isMakeInvisible)
     const box: RowData[] = []
 
     useEffect(() => {
@@ -74,15 +75,28 @@ const ElementsModelList: React.FC = () => {
             <>
                 <div className='h-full w-full p-[15px]'>
                     <div className='h-[70%] m-[20px] '>
-                        <button className='px-[10px] py-[5px] border rounded-[15px] cursor-pointer hover:bg-[#5f5f64]' onClick={() => { 
-                            for (const el of selectedItems) {
-                                editor.resetElementFromTable([el])
-                                console.log(el)
-                            }
-                            dispatch(clearAll())
-                            console.log(selectedItems)
-                            console.log('кликнул')
-                        }}>Сбросить выделение</button>
+                        <div className='flex justify-between mb-[20px]'>
+                            <button className='px-[10px] py-[5px] border rounded-[15px] cursor-pointer hover:bg-[#5f5f64]' onClick={() => { 
+                                for (const el of selectedItems) {
+                                    editor.resetElementFromTable([el])
+                                    console.log(el)
+                                }
+                                dispatch(clearAll())
+                            }}>Сбросить выделение
+                            </button>
+                            <button  className={`ml-[20px] px-[10px] py-[5px] border rounded-[15px] cursor-pointer hover:bg-[#5f5f64] ${isMakeInvisible && 'bg-[#A5A5A5]'}`}
+                            onClick={(() => {
+                                if (!isMakeInvisible) {
+                                    editor.makeInvisible()
+                                    dispatch(invisible())
+                                } else {
+                                    editor.makeVisible()
+                                    dispatch(visible())
+                                }
+                            })}>
+                                {!isMakeInvisible ? 'Скрыть невыделенное' : 'Показать невыделенное'}
+                            </button>
+                        </div>
                         <div className='custom-scroll-unvisible grid grid-cols-[15%_45%_30%_10%] items-center border-b [&_span]:!font-bold [&_span]:!text-lg'>
                             <span className='p-[10px] m-x-[5px] border-r'>№</span>
                             <span className='p-[10px] m-x-[5px] border-r'>Наименование</span>

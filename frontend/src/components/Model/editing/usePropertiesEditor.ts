@@ -329,6 +329,35 @@ class PropertiesEditor {
                 this.currentElement.disposeMeshes(this.currentMesh)
             }
         }
+
+        //делаем невидимыми все элементы, кромме выделенных
+        public makeInvisible = () => {
+            if (!this._scene) return
+            const selectedMeshesSet = new Set<THREE.Mesh>()
+
+            for (const group of this.selectedMeshes.values()) {
+                group.traverse((child) => {
+                    if (child instanceof THREE.Mesh) {
+                        selectedMeshesSet.add(child)
+                    }
+                })
+            }
+
+            this._scene.traverse((child) => {
+                if (child instanceof THREE.Mesh && !selectedMeshesSet.has(child)) {
+                    child.visible = false
+                }
+            })
+        }
+
+        public makeVisible = () => {
+            if (!this._scene) return
+            this._scene.traverse((child) => {
+                if (child instanceof THREE.Mesh) {
+                    child.visible = true
+                }
+            })
+        }
     }
 
 export const editor = new PropertiesEditor()
