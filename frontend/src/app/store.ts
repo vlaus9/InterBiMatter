@@ -3,13 +3,16 @@ import  isOpenModalWindowSlice  from '../components/ModalWindow/slices/isOpenMod
 import authSlice from '../components/Auth/slices/authSlice'
 import projectList from '../components/ProjectsList/slice/ProjectsListSlice'
 import projectSlice from '../components/CreateProjectForm/slices/projectSlice'
+import elementsModelListSlice from '../components/Model/slice/elementsModelListSlice'
+
 
 export const store = configureStore({
     reducer: {
         isOpenModalWindowSlice,
         authSlice,
         projectList,
-        projectSlice
+        projectSlice,
+        elementsModelListSlice
     }
 })
 

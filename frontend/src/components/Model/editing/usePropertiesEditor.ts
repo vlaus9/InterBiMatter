@@ -1,9 +1,6 @@
 import * as OBC from '@thatopen/components'
 import * as FRAGS from '@thatopen/fragments'
 import * as THREE from 'three'
-import { workerUrlStore } from '../store/workerUrl-store'
-
-
 
 
 export type TTableData = {
@@ -79,6 +76,11 @@ class PropertiesEditor {
         public informationSelectedItem: ((data: any) => void) | null = null
         public closeInformationSelectedItem: (() => void) | null = null
 
+        //хранение меша в одиночном варианте при выделении кликом и при выделении нескольких элементов через таблицу
+        // selectedMeshClick: Map<number, (THREE.Group<THREE.Object3DEventMap> | number)> = new Map().set(0, 0)
+        selectedMeshes: Map<number, THREE.Group<THREE.Object3DEventMap>> = new Map()
+
+
         //список элементов модели
         public elementsModelList: ((data: any) => void) | null = null
 
@@ -109,7 +111,7 @@ class PropertiesEditor {
             }
             this._renderer = renderer
 
-            if (!this._eventsSetup) {
+            if (!this._eventsSetup && this._renderer) {
                 this.setupEvents()
                 this._eventsSetup = true
             }
@@ -143,6 +145,7 @@ class PropertiesEditor {
 
             const canvas = this._renderer.domElement
             canvas.addEventListener('dblclick',  async(event) => {
+                //Этого не надо, функция уже подразумевает это
                 // mouse.x = (event.clientX / canvas.clientWidth) * 2 - 1
                 // mouse.y = - (event.clientY / canvas.clientHeight) * 2 + 1
                 mouse.x = event.clientX
@@ -150,6 +153,21 @@ class PropertiesEditor {
 
                 let result: any
 
+                //куда то теряется меш при первом запуске, что то задваивается
+                // if (!this.selectedMeshClick.has(0)) {
+                //     if (!this._modelId) return
+                //     const keysElemMap = this.selectedMeshClick.keys().next().value
+                //     if (!keysElemMap) return
+                //     const getElem = await this._fragments?.editor.getElements(this._modelId, [keysElemMap])
+                //     if (!getElem) return
+                //     const elem = getElem?.[0]
+                //     this.currentElement = elem
+                //     this.currentMesh = this.selectedMeshClick.get(keysElemMap) as THREE.Group<THREE.Object3DEventMap>
+                //     this.currentElement.disposeMeshes(this.currentMesh)
+                //     this.selectedMeshClick.delete(keysElemMap)
+
+                // }
+               
                 if (this.currentElement && this.currentMesh) {
                     this.currentElement.disposeMeshes(this.currentMesh)
                 }
@@ -218,6 +236,10 @@ class PropertiesEditor {
                     }
                 })
 
+                // if(this.selectedMeshClick.has(0)) {
+                //     this.selectedMeshClick.delete(0)
+                // }
+                // this.selectedMeshClick.set(this.currentElement.localId, this.currentMesh)
                 this._scene!.add(this.currentMesh)
 
                 //получение дата активного элемента для угловой модалки при нажатии
@@ -226,21 +248,19 @@ class PropertiesEditor {
                 if (this.informationSelectedItem) {
                     this.informationSelectedItem(currentElementData)
                 }
-
-                
-                // this.updatePropertiesTable()
             })
 
 
 
             window.addEventListener('keydown', async(event) => {
                 if (event.key === 'Escape') {
-                    if (!this.currentElement || !this._fragments) {
+                    if (!this.currentElement || !this._fragments || !this.currentMesh) {
                         return
                     }
+                    console.log([this.currentElement, this.currentMesh])
                     if(this.currentElement && this.currentMesh) {
                         this.currentElement.disposeMeshes(this.currentMesh)
-                    }
+                    } 
 
                     if (this.closeInformationSelectedItem) {
                         this.closeInformationSelectedItem()
@@ -249,11 +269,9 @@ class PropertiesEditor {
                     this.currentElement.getRequests()
 
                     this.currentAttributes = []
-                    this.onPropertiesUpdated.trigger([])
                     this.itemsDataById.clear()
                     await this._fragments.update(true)
                     this.currentElement = null
-                    // this.updatePropertiesTable()
                     this.onPropertiesUpdated.trigger([])
                 }
             })
@@ -287,7 +305,6 @@ class PropertiesEditor {
             this.currentElement.config = this.elementsConfig
 
             this.currentMesh = await element.getMeshes()
-
             this.currentMesh.traverse((child) => {
                 if (child instanceof THREE.Mesh) {
                     const mat = child.material as THREE.MeshLambertMaterial
@@ -295,23 +312,22 @@ class PropertiesEditor {
                     mat.color.set('gold')
                 }
             })
-
+            this.selectedMeshes.set(element.localId, this.currentMesh)
             this._scene?.add(this.currentMesh)
         }
 
+        //возвращение цвета выделенному элементу (сброс)
         public resetElementFromTable = async(localId: Iterable<number>) => {
             if (!this._modelId) return
             const result = await this._fragments?.editor.getElements(this._modelId, localId)
             if (!result) return
             const element = result?.[0]
             this.currentElement = element
-            this.currentMesh = await this.currentElement.getMeshes()
-            this.currentElement.disposeMeshes(this.currentMesh)
-            await this._fragments?.update(true)
-            // result.map(async(el) => {
-            //     const mesh = await el.getMeshes()
-            //     el.disposeMeshes(mesh)
-            // })
+            this.currentMesh = this.selectedMeshes.get(element.localId)!
+            if (this.currentMesh && this.currentElement) {
+                console.log([this.currentElement, this.currentMesh])
+                this.currentElement.disposeMeshes(this.currentMesh)
+            }
         }
     }
 

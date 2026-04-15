@@ -18,7 +18,7 @@ const Splash: React.FC = () => {
                 animate="in"
                 exit="out"
                 className='text-[76px] text-[var(--text-primary)] whitespace-nowrap overflow-hidden'
-                style={{ fontWeight: '700' }}>
+                style={{ fontWeight: '900' }}>
                   BiMatter
             </motion.h1>
         </motion.div>

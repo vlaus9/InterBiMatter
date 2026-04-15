@@ -1,0 +1,16 @@
+
+.custom-scroll {
+    scrollbar-gutter: stable;
+    scrollbar-color: #888 var(--bg-secondary); 
+}
+
+.custom-scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #888 var(--bg-secondary);
+}
+
+.custom-scroll-unvisible {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+    scrollbar-color: var(--bg-secondary) var(--bg-secondary);
+}
