@@ -5,7 +5,7 @@ import { List } from "react-window"
 import type { RowComponentProps } from "react-window"
 import "./style/elementModelList.css"
 import { useAppSelector, useAppDispatch } from "../../../app/hooks"
-import { addElem, delElem, clearAll, invisible, visible } from "../slice/elementsModelListSlice"
+import { addElem, delElem, clearAll, invisible, visible, makeWireFrame, delWireFrame } from "../slice/elementsModelListSlice"
 
 type RowData = [string, string, number]
 
@@ -15,6 +15,8 @@ const ElementsModelList: React.FC = () => {
     const [elementsModelList, setElementsModelList] = useState<FRAGS.ItemData[] | null>(null)
     const selectedItems = useAppSelector<number[]>((state) => state.elementsModelListSlice.selectedElem)
     const isMakeInvisible = useAppSelector<boolean>((state) => state.elementsModelListSlice.isMakeInvisible)
+    const isWireFrame = useAppSelector<boolean>((state) => state.elementsModelListSlice.isWireFrame)
+    console.log(isWireFrame)
     const box: RowData[] = []
 
     useEffect(() => {
@@ -46,16 +48,16 @@ const ElementsModelList: React.FC = () => {
             className={`grid grid-cols-[15%_45%_30%_10%] items-center border-b cursor-pointer hover:bg-[#5f5f64] ${selectedItems.includes(data[index][2]) ? 'bg-[#6b6b70]' : 'white'}`} style={style}
             onClick={() => {
                 const id = data[index][2]
-                // const newSelected = new Set(selectedItems)
 
                 if (selectedItems.includes(id)) {
                     dispatch(delElem(id))
-                    // newSelected.delete(id)
                     editor.resetElementFromTable([id])
                 } else {
                     dispatch(addElem(id))
-                    // newSelected.add(id)
-                    editor.selectItemFromTable([id])
+                    if (isWireFrame) {
+                        editor.selectItemFromTable([id], true)
+                    }
+                    editor.selectItemFromTable([id], false)
                 }
                 
                 // setSelectedItems(newSelected)
@@ -76,6 +78,17 @@ const ElementsModelList: React.FC = () => {
                 <div className='h-full w-full p-[15px]'>
                     <div className='h-[70%] m-[20px] '>
                         <div className='flex justify-between mb-[20px]'>
+                            <button className={`px-[10px] py-[5px] border rounded-[15px] cursor-pointer hover:bg-[#5f5f64] ${isWireFrame && 'bg-[#A5A5A5]'}`} onClick={() => {
+                                if (!isWireFrame) {
+                                    dispatch(makeWireFrame())
+                                    console.log(isWireFrame)
+                                } else {
+                                    dispatch(delWireFrame())
+                                    console.log(isWireFrame)
+                                }
+                            }}>
+                                Каркасный режим выделения
+                            </button>
                             <button className='px-[10px] py-[5px] border rounded-[15px] cursor-pointer hover:bg-[#5f5f64]' onClick={() => { 
                                 for (const el of selectedItems) {
                                     editor.resetElementFromTable([el])

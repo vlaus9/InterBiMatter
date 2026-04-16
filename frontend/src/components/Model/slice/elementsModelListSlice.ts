@@ -2,12 +2,14 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface IElementsModelList {
     selectedElem: number[],
-    isMakeInvisible: boolean
+    isMakeInvisible: boolean,
+    isWireFrame: boolean
 }
 
 const initialState: IElementsModelList = {
     selectedElem: [],
-    isMakeInvisible: false
+    isMakeInvisible: false,
+    isWireFrame: false
 }
 
 const elementsModelListSlice = createSlice({
@@ -32,9 +34,15 @@ const elementsModelListSlice = createSlice({
         },
         visible: (state) => {
             state.isMakeInvisible = false
+        },
+        makeWireFrame: (state) => {
+            state.isWireFrame = true
+        },
+        delWireFrame: (state) => {
+            state.isWireFrame = false
         }
     }
 })
 
-export const { addElem, delElem, clearAll, invisible, visible } = elementsModelListSlice.actions
+export const { addElem, delElem, clearAll, invisible, visible, makeWireFrame, delWireFrame } = elementsModelListSlice.actions
 export default elementsModelListSlice.reducer

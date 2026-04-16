@@ -295,7 +295,7 @@ class PropertiesEditor {
         }
 
         //метод для подсвечивания элемента при выборе из списка в модалке
-        public selectItemFromTable = async(localId: Iterable<number>) => {
+        public selectItemFromTable = async(localId: Iterable<number>, isWireFrame: boolean) => {
             if (!this._modelId) return
             const result = await this._fragments?.editor.getElements(this._modelId, localId)
             const element = result?.[0]
@@ -309,7 +309,11 @@ class PropertiesEditor {
                 if (child instanceof THREE.Mesh) {
                     const mat = child.material as THREE.MeshLambertMaterial
                     mat.depthTest = false
-                    mat.color.set('gold')
+                    if (isWireFrame) {
+                        mat.wireframe = true
+                    } else {
+                        mat.color.set('gold')
+                    }
                 }
             })
             this.selectedMeshes.set(element.localId, this.currentMesh)
@@ -325,7 +329,6 @@ class PropertiesEditor {
             this.currentElement = element
             this.currentMesh = this.selectedMeshes.get(element.localId)!
             if (this.currentMesh && this.currentElement) {
-                console.log([this.currentElement, this.currentMesh])
                 this.currentElement.disposeMeshes(this.currentMesh)
             }
         }
@@ -348,6 +351,7 @@ class PropertiesEditor {
                     child.visible = false
                 }
             })
+
         }
 
         public makeVisible = () => {
@@ -357,6 +361,10 @@ class PropertiesEditor {
                     child.visible = true
                 }
             })
+        }
+
+        public makeWireFrame = () => {
+
         }
     }
 
