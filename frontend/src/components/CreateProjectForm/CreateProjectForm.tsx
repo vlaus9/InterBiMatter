@@ -46,7 +46,7 @@ const CreateProjectForm: React.FC = () => {
         const result = await dispatch(createProject(formData)).unwrap()
 
         if (result) {
-            navigate('/')
+            navigate('/Project')
         }
 
         } catch (error) {
@@ -104,24 +104,26 @@ const CreateProjectForm: React.FC = () => {
                     </div>
 
                     {selectedFiles.length > 0 && (
-                        <div>
-                            <h4>Выбранные файлы</h4>
-                            <ul>
-                                {selectedFiles.map((file, index) => (
-                                   <div key={index}>
-                                    <li>
-                                        <span>{file.name}</span>
-                                    </li>
-                                    <button
-                                    type='button'
-                                    onClick={() => removeFile(index)}
-                                    >
-                                        ✕
-                                    </button>
-                                   </div>
-                                   
-                                ))}
-                            </ul>
+                        <div className='w-full flex justify-end'>
+                            <div className='w-[500px] text-center'>
+                                {/* <h4>Выбранные файлы</h4> */}
+                                <ul> 
+                                    {selectedFiles.map((file, index) => (
+                                    <div key={index}>
+                                        <li>
+                                            <span>{file.name}</span>
+                                        </li>
+                                        <button
+                                        type='button'
+                                        onClick={() => removeFile(index)}
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+                                    
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
                     )}
 

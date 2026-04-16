@@ -44,9 +44,9 @@ const App = () => {
           { splash ? (<Splash />) : (
         <Routes location={location} key={location.pathname}>
           <Route path='/login' element={<RouteLoginForm/>}/>
-          <Route path='/' element={<RouteProject />}/>
+          <Route path='/' element={<RouteProfile />}/>
           <Route path='/register' element={<RouteRegisterForm />}/>
-          <Route path='/profile' element={<RouteProfile />}/>
+          <Route path='/project' element={<RouteProject />}/>
           {/* <Route path='/createProject' element={<CreateProjectForm />}/> */}
         </Routes>
         )

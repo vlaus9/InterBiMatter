@@ -11,9 +11,10 @@ const ProjectsList: React.FC = () => {
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
 
+
     const openProjectClick = (id: string) => {
         dispatch(openProject(id))
-        navigate('/')
+        navigate('/Project')
     }
 
     if (user) {
@@ -39,7 +40,7 @@ if (projectList && projectList.projects) {
                 <div onClick={() => openProjectClick(project._id.toString())} key={project.id} className='w-full grid grid-cols-5 text-center divide-x-2 divide-solid cursor-pointer border border-[var(--button-group-primary-bg)] rounded-[10px] hover:border-[var(--bg-secondary)] mb-[5px]'>
                     <h3 className=''>{`${project.name}`}</h3>
                     <h3 className=''>{`${project.autor}`}</h3>
-                    <h3 className=' col-span-3'>{`${project.modelPath}`}</h3>
+                    <h3 className=' col-span-3'>{`${project.modelPath.split('/').pop()}`}</h3>
                 </div>
                 )
             })

@@ -1,5 +1,4 @@
 import type { ImodalWindowData } from "../types/ModalWindowTypes"
-import ElementsModelList from "../../Model/info-UI/ElementsModelList"
 
 export const ModalWindowData: ImodalWindowData = [
     {
@@ -13,14 +12,14 @@ export const ModalWindowData: ImodalWindowData = [
         id: 2,
         name: 'Модалка 2',
         contenType: 'Модалка 2',
-        contentData: 'Модалка 2',
+        contentData: 'deletePustishka',
         isOpen: true,
     },
     {
         id: 3,
         name: 'Модалка 3',
         contenType: 'Модалка 3',
-        contentData: 'Модалка 3',
+        contentData: 'deletePustishka2',
         isOpen: true,
     }
 ]

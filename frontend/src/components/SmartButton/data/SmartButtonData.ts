@@ -50,6 +50,6 @@ export const SmartButtonDataProfile: ISmartButtonData = [
         contentType: "string",
         clickAction: Profile,
         side: 'right',
-        navigate: '/profile'
+        navigate: '/'
     }
 ]

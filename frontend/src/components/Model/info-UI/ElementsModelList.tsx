@@ -5,7 +5,7 @@ import { List } from "react-window"
 import type { RowComponentProps } from "react-window"
 import "./style/elementModelList.css"
 import { useAppSelector, useAppDispatch } from "../../../app/hooks"
-import { addElem, delElem, clearAll, invisible, visible, makeWireFrame, delWireFrame } from "../slice/elementsModelListSlice"
+import { addElem, delElem, clearAll, invisible, visible, makeWireFrame, delWireFrame, makeOpacity, delOpacity } from "../slice/elementsModelListSlice"
 
 type RowData = [string, string, number]
 
@@ -16,7 +16,7 @@ const ElementsModelList: React.FC = () => {
     const selectedItems = useAppSelector<number[]>((state) => state.elementsModelListSlice.selectedElem)
     const isMakeInvisible = useAppSelector<boolean>((state) => state.elementsModelListSlice.isMakeInvisible)
     const isWireFrame = useAppSelector<boolean>((state) => state.elementsModelListSlice.isWireFrame)
-    console.log(isWireFrame)
+    const isOpacity = useAppSelector<boolean>((state) => state.elementsModelListSlice.isMakeOpacity)
     const box: RowData[] = []
 
     useEffect(() => {
@@ -41,6 +41,7 @@ const ElementsModelList: React.FC = () => {
             })
     }
     
+
     //функция для отображения списка
     const Row = ({ index, data, style }: RowComponentProps<{ data: RowData[]}>) => {
         return (
@@ -55,9 +56,10 @@ const ElementsModelList: React.FC = () => {
                 } else {
                     dispatch(addElem(id))
                     if (isWireFrame) {
-                        editor.selectItemFromTable([id], true)
+                        editor.makeWireFrame()
                     }
-                    editor.selectItemFromTable([id], false)
+                    editor.selectItemFromTable([id])
+                    
                 }
                 
                 // setSelectedItems(newSelected)
@@ -77,25 +79,37 @@ const ElementsModelList: React.FC = () => {
             <>
                 <div className='h-full w-full p-[15px]'>
                     <div className='h-[70%] m-[20px] '>
-                        <div className='flex justify-between mb-[20px]'>
+                        <div className='flex justify-between mb-[10px] whitespace-nowrap overflow-auto border-b  pb-[20px]'>
                             <button className={`px-[10px] py-[5px] border rounded-[15px] cursor-pointer hover:bg-[#5f5f64] ${isWireFrame && 'bg-[#A5A5A5]'}`} onClick={() => {
                                 if (!isWireFrame) {
                                     dispatch(makeWireFrame())
-                                    console.log(isWireFrame)
+                                    editor.makeWireFrame()
                                 } else {
                                     dispatch(delWireFrame())
-                                    console.log(isWireFrame)
+                                    editor.delWireFrame()
                                 }
                             }}>
                                 Каркасный режим выделения
                             </button>
-                            <button className='px-[10px] py-[5px] border rounded-[15px] cursor-pointer hover:bg-[#5f5f64]' onClick={() => { 
+                            <button className='ml-[20px] px-[10px] py-[5px] border rounded-[15px] cursor-pointer hover:bg-[#5f5f64]' onClick={() => { 
                                 for (const el of selectedItems) {
                                     editor.resetElementFromTable([el])
                                     console.log(el)
                                 }
                                 dispatch(clearAll())
                             }}>Сбросить выделение
+                            </button>
+                            <button className={`ml-[20px] px-[10px] py-[5px] border rounded-[15px] cursor-pointer hover:bg-[#5f5f64] ${isOpacity && 'bg-[#A5A5A5]'}`} onClick={() => { 
+                                if (!isOpacity) {
+                                    editor.makeOpacity(box.filter((el) => !selectedItems.includes(el[2])))
+                                    dispatch(makeOpacity())
+                                } else {
+                                    editor.delOpacity()
+                                    dispatch(delOpacity())
+                                }
+                            }}
+                            >
+                                Прозрачный режим
                             </button>
                             <button  className={`ml-[20px] px-[10px] py-[5px] border rounded-[15px] cursor-pointer hover:bg-[#5f5f64] ${isMakeInvisible && 'bg-[#A5A5A5]'}`}
                             onClick={(() => {

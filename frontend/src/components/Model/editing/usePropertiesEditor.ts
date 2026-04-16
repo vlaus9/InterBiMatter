@@ -68,6 +68,7 @@ class PropertiesEditor {
         private _scene: THREE.Scene | null = null
         private _worker: string = ''
         private _eventsSetup: boolean = false
+        private _opacityMesh: THREE.Group<THREE.Object3DEventMap>[] = []
 
 
 
@@ -295,7 +296,7 @@ class PropertiesEditor {
         }
 
         //метод для подсвечивания элемента при выборе из списка в модалке
-        public selectItemFromTable = async(localId: Iterable<number>, isWireFrame: boolean) => {
+        public selectItemFromTable = async(localId: Iterable<number>) => {
             if (!this._modelId) return
             const result = await this._fragments?.editor.getElements(this._modelId, localId)
             const element = result?.[0]
@@ -309,11 +310,7 @@ class PropertiesEditor {
                 if (child instanceof THREE.Mesh) {
                     const mat = child.material as THREE.MeshLambertMaterial
                     mat.depthTest = false
-                    if (isWireFrame) {
-                        mat.wireframe = true
-                    } else {
-                        mat.color.set('gold')
-                    }
+                    mat.color.set('gold')
                 }
             })
             this.selectedMeshes.set(element.localId, this.currentMesh)
@@ -364,7 +361,59 @@ class PropertiesEditor {
         }
 
         public makeWireFrame = () => {
+            for (const group of this.selectedMeshes.values()) {
+                group.traverse((child) => {
+                    if (child instanceof THREE.Mesh) {
+                        const mat = child.material as THREE.MeshLambertMaterial
+                        mat.wireframe = true
+                        mat.color.set('white')
+                    }
+                })
+            }
+        }
 
+        public delWireFrame = () => {
+            for (const group of this.selectedMeshes.values()) {
+                group.traverse((child) => {
+                    if (child instanceof THREE.Mesh) {
+                        const mat = child.material as THREE.MeshLambertMaterial
+                        mat.wireframe = false
+                        mat.color.set('gold')
+                    }
+                })
+            }
+        }
+
+        public makeOpacity = (localIds: [string, string, number][])  => {
+            localIds.map(async(el) => {
+                const id = el[2]
+                if (!this._modelId) return
+                const result = await this._fragments?.editor.getElements(this._modelId, [id])
+                const element = result?.[0]
+
+                if (!element) return
+                this.currentElement = element
+                this.currentElement.config = this.elementsConfig
+
+                this.currentMesh = await element.getMeshes()
+                this.currentMesh.traverse((child) => {
+                    if (child instanceof THREE.Mesh) {
+                        const mat = child.material as THREE.MeshLambertMaterial
+                        mat.transparent = true
+                        mat.opacity = 0.3
+                    }
+                })
+                this._scene?.add(this.currentMesh)
+                this._opacityMesh.push(this.currentMesh)
+            })
+            this.makeInvisible()
+        }
+
+        public delOpacity = () => {
+            this._opacityMesh.map((mesh) => {
+                this._scene!.remove(mesh)
+            })
+            this.makeVisible()
         }
     }
 

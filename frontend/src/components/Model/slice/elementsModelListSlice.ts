@@ -3,13 +3,15 @@ import { createSlice } from "@reduxjs/toolkit";
 interface IElementsModelList {
     selectedElem: number[],
     isMakeInvisible: boolean,
-    isWireFrame: boolean
+    isWireFrame: boolean,
+    isMakeOpacity: boolean
 }
 
 const initialState: IElementsModelList = {
     selectedElem: [],
     isMakeInvisible: false,
-    isWireFrame: false
+    isWireFrame: false,
+    isMakeOpacity: false
 }
 
 const elementsModelListSlice = createSlice({
@@ -40,9 +42,15 @@ const elementsModelListSlice = createSlice({
         },
         delWireFrame: (state) => {
             state.isWireFrame = false
+        },
+        makeOpacity: (state) => {
+            state.isMakeOpacity = true
+        },
+        delOpacity: (state) => {
+            state.isMakeOpacity = false
         }
     }
 })
 
-export const { addElem, delElem, clearAll, invisible, visible, makeWireFrame, delWireFrame } = elementsModelListSlice.actions
+export const { addElem, delElem, clearAll, invisible, visible, makeWireFrame, delWireFrame, makeOpacity, delOpacity } = elementsModelListSlice.actions
 export default elementsModelListSlice.reducer
