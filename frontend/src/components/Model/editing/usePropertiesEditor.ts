@@ -258,7 +258,6 @@ class PropertiesEditor {
                     if (!this.currentElement || !this._fragments || !this.currentMesh) {
                         return
                     }
-                    console.log([this.currentElement, this.currentMesh])
                     if(this.currentElement && this.currentMesh) {
                         this.currentElement.disposeMeshes(this.currentMesh)
                     } 
@@ -279,7 +278,7 @@ class PropertiesEditor {
 
         }
 
-            //получение списка элементов модели
+        //получение списка элементов модели
         public async getElementsModel() {
              if (!this._modelId) return
 
@@ -288,7 +287,18 @@ class PropertiesEditor {
             if (!model) return
 
             const elementsIds = await model.getItemsIds()
-            const elementsList = await model.getItemsData(elementsIds)
+
+            let resultIds: number[] = []
+            
+            for (const id of elementsIds) {
+                const result = await this._fragments?.editor.getElements(this._modelId, [id])
+                const elem = result?.[0]
+                if (elem) {
+                    resultIds.push(id)
+                }
+            }
+
+            const elementsList = await model.getItemsData(resultIds)
                 
             if (this.elementsModelList) {
                 this.elementsModelList(elementsList)
@@ -351,6 +361,7 @@ class PropertiesEditor {
 
         }
 
+        //Вернуть видимость невыделенным элементам
         public makeVisible = () => {
             if (!this._scene) return
             this._scene.traverse((child) => {
@@ -360,6 +371,7 @@ class PropertiesEditor {
             })
         }
 
+        //Включить каркасный режим
         public makeWireFrame = () => {
             for (const group of this.selectedMeshes.values()) {
                 group.traverse((child) => {
@@ -371,7 +383,7 @@ class PropertiesEditor {
                 })
             }
         }
-
+        //Выключить каркасный режим
         public delWireFrame = () => {
             for (const group of this.selectedMeshes.values()) {
                 group.traverse((child) => {
@@ -384,6 +396,7 @@ class PropertiesEditor {
             }
         }
 
+        //Включить режим прозрачности
         public makeOpacity = (localIds: [string, string, number][])  => {
             localIds.map(async(el) => {
                 const id = el[2]
@@ -409,6 +422,7 @@ class PropertiesEditor {
             this.makeInvisible()
         }
 
+        //Выключить режим прозрачности
         public delOpacity = () => {
             this._opacityMesh.map((mesh) => {
                 this._scene!.remove(mesh)

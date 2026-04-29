@@ -5,6 +5,7 @@ import './style/infoUIStyles.css'
 
 const InfoCurrentElement: React.FC = () => {
     
+    
     const infoWindowRef = useRef<HTMLDivElement | null>(null)
     const [showInfoWindow, setShowInfoWindow] = useState<boolean>(false)
     const [selectedElementInfo, setSelectedElementInfo] = useState<FRAGS.ItemData | null>(null)
@@ -38,14 +39,14 @@ const InfoCurrentElement: React.FC = () => {
     } else {
         return (
             <>
-                <div className='info-current-element-opening absolute py-[15px] px-[20px] right-[50px] bottom-[50px] bg-[var(--bg-secondary)] rounded-[25px]' ref={infoWindowRef}>
+                <div className='info-current-element-opening absolute py-[15px] px-5 right-[50px] bottom-[50px] bg-(--bg-secondary) rounded-[25px]' ref={infoWindowRef}>
                     
                     {selectedElementInfo && (
                         <div>
                             {Object.entries(selectedElementInfo)
                             .filter(([key, value]) => (key === '_category' || key === '_localId' || key === 'Name'))
                             .map(([key, value]) => (
-                                <div key={key} className='text-lg text-[var(--text-primary)]'>
+                                <div key={key} className='text-lg text-(--text-primary)'>
                                     <span style={{ fontWeight: 700 }}>{
                                     key === '_category' ? 'Категория' :
                                     key === '_localId' ? 'ID' :

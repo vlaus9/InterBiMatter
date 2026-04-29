@@ -94,7 +94,6 @@ const ElementsModelList: React.FC = () => {
                             <button className='ml-[20px] px-[10px] py-[5px] border rounded-[15px] cursor-pointer hover:bg-[#5f5f64]' onClick={() => { 
                                 for (const el of selectedItems) {
                                     editor.resetElementFromTable([el])
-                                    console.log(el)
                                 }
                                 dispatch(clearAll())
                             }}>Сбросить выделение
