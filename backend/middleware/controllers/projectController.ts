@@ -2,6 +2,8 @@ import { Request, Response } from 'express'
 // import { organizeProjectFiles } from '../upload'
 import path from 'path'
 import Project from '../../models/Project'
+import { v4 as uuidv4 } from 'uuid'
+import { uuid } from '@gltf-transform/core'
 
 declare global {
     namespace Express {
@@ -78,7 +80,7 @@ export const createProject = async (req: Request, res: Response) => {
 
     const projectId = req.projectId || `project_${Date.now()}`
 
-    const projectDirWithUrl = `${req.protocol}://${req.get('host')}/uploads/${path.basename(req.projectDir)}/${files[0].originalname}`
+    const projectDirWithUrl = `${req.protocol}://${req.get('host')}/uploads/${path.basename(path.dirname(req.projectDir))}/1/${files[0].originalname}`
 
     let modelUrl = projectDirWithUrl
 
@@ -88,12 +90,13 @@ export const createProject = async (req: Request, res: Response) => {
         creationDate: Date.now(),
         autor: req.body.autor,
         modelPath: modelUrl,
-        files: []
-        // files: organizedFiles.map(f => ({
-        //     name: f.originalName,
-        //     type: f.type,
-        //     path: f.path.replace(/^.*uploads[\\/]/, '')
-        // }))
+        files: [],
+        versions: [{
+            id: String(uuidv4),
+            name: req.body.versionName,
+            date: req.body.date,
+            filePath: modelUrl
+        }]
     })
 
     const responseData = {
@@ -102,7 +105,8 @@ export const createProject = async (req: Request, res: Response) => {
         creationDate: newProject.creationDate,
         autor: newProject.autor,
         modelPath: newProject.modelPath,
-        files: newProject.files
+        files: newProject.files,
+        versions: newProject.versions
     }
 
     res.status(201).json({
@@ -153,5 +157,36 @@ export const createProject = async (req: Request, res: Response) => {
             status: 'error',
             message: 'Ошибка при удалении проекта'
         })
+    }
+ }
+
+ export const addFileToProject = async(req: Request, res: Response) => {
+    if (!req.file || !req.projectDir) {
+        return res.status(400).json({
+            status: 'fail',
+            message: 'Файл модели обязателенЫ'
+        })
+    }
+    try {
+        const project = await Project.findById(req.params.id)
+        if (!project) {
+            return res.status(404).json({
+                error: 'Проект не найдет'
+            })
+        }
+
+        const file = req.file as Express.Multer.File
+        const filePathWithUrl = `${req.protocol}://${req.get('host')}/uploads/${path.basename(path.dirname(req.projectDir))}/ ${path.basename(req.projectDir)}/${file.originalname}`
+        project.versions.push({
+            id: String(uuidv4),
+            name: req.body.versionName,
+            description: req.body.description,
+            date: req.body.date,
+            filePath: filePathWithUrl
+        })
+
+    }
+    catch {
+
     }
  }

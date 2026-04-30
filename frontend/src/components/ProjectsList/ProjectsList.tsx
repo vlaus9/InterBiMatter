@@ -31,7 +31,8 @@ if (projectList && projectList.projects) {
         <div className='w-full grid grid-cols-5 text-center divide-x-2 divide-solid border border-[var(--button-group-primary-bg)] border-b-[black] border-b-[2px] rounded-t-[10px] mb-[2px]' >
                     <h3 style={{fontWeight: 700}} className=''>Название</h3>
                     <h3 style={{fontWeight: 700}} className=''>Автор</h3>
-                    <h3 style={{fontWeight: 700}} className=' col-span-3'>Имя файла</h3>
+                    <h3 style={{fontWeight: 700}} className=''>Версия</h3>
+                    <h3 style={{fontWeight: 700}} className=' col-span-2'>Имя файла</h3>
                 </div>
 
         {
@@ -40,7 +41,9 @@ if (projectList && projectList.projects) {
                 <div onClick={() => openProjectClick(project._id.toString())} key={project.id} className='w-full grid grid-cols-5 text-center divide-x-2 divide-solid cursor-pointer border border-[var(--button-group-primary-bg)] rounded-[10px] hover:border-[var(--bg-secondary)] mb-[5px]'>
                     <h3 className=''>{`${project.name}`}</h3>
                     <h3 className=''>{`${project.autor}`}</h3>
-                    <h3 className=' col-span-3'>{`${project.modelPath.split('/').pop()}`}</h3>
+                    {/* Должна быть активная версия файла */}
+                    <h3 className=''>{`${project.versions[0].name}`}</h3>
+                    <h3 className=' col-span-2'>{`${project.modelPath.split('/').pop()}`}</h3>
                 </div>
                 )
             })

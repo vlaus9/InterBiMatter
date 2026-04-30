@@ -7,6 +7,14 @@ interface IOrganizedFiles {
     path: string
 }
 
+interface IVersions {
+    id: string
+    name: string
+    description?: string
+    date: Date | string
+    filePath: string
+}
+
 export interface IProject {
     _id: string | ''
     id: string | ''
@@ -15,6 +23,7 @@ export interface IProject {
     autor: string
     modelPath: string
     files: IOrganizedFiles
+    versions: IVersions[]
 }
 
 interface IProjectState {

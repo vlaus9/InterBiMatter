@@ -8,6 +8,7 @@ import { AnimateVariants } from "../Auth/animate/AnimateVariants"
 const CreateProjectForm: React.FC = () => {
     
     const [nameProject, setNameProject] = useState<string>('')
+    const [version, setVersion] = useState<string>('')
     const [selectedFiles, setSelectedFiles] = useState<File[]>([])
     const [fileName, setFileName] = useState<string>('')
     const dispatch = useAppDispatch()
@@ -38,6 +39,7 @@ const CreateProjectForm: React.FC = () => {
 
             const formData = new FormData()
             formData.append('name', nameProject)
+            formData.append('versionName', version)
             formData.append('autor', userName)
             selectedFiles.forEach(file => 
                 formData.append('files', file)
@@ -79,18 +81,22 @@ const CreateProjectForm: React.FC = () => {
                 </div>
                 <form onSubmit={handleSubmit} className='h-[80%] flex flex-col justify-center items-center'>
                     <div className='mb-[20px] w-[600px] flex justify-between items-center'>
-                        <label htmlFor='nameProject' className='mb-[10px] mt-[10px] text-[18px] text-[var(--text-primary)]' >Название проекта</label>
+                        <label htmlFor='nameProject' className='mb-[10px] mt-[10px] text-[18px] text-[var(--text-primary)]'>Название проекта</label>
                         <input id='nameProject' type='text' placeholder='Введите название проекта...' value={nameProject} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNameProject(e.target.value)} required className='w-[300px] h-[45px] p-[8px] border border-[black] bg-[var(--button-group-primary-bg)] outline-[var(--button-group-primary-bg)] rounded-[4px] text-[var(--text-primary)] placeholder:text-center placeholder:text-[black] placeholder:opacity-[0.5]'></input>
                     </div>
+                    <div className='mb-[20px] w-[600px] flex justify-between items-center'>
+                        <label htmlFor='nameProject' className='mb-[10px] mt-[10px] text-[18px] text-[var(--text-primary)]'>Версия файла модели</label>
+                        <input id='nameProject' type='text' placeholder='Введите название версии...' value={version} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVersion(e.target.value)} required className='w-[300px] h-[45px] p-[8px] border border-[black] bg-[var(--button-group-primary-bg)] outline-[var(--button-group-primary-bg)] rounded-[4px] text-[var(--text-primary)] placeholder:text-center placeholder:text-[black] placeholder:opacity-[0.5]'></input>
+                    </div>
                     <div className='flex justify-between items-center w-[600px] '>
-                        <h3 className='text-[18px] text-[var(--text-primary)]'>Файлы модели</h3>
+                        <h3 className='text-[18px] text-[var(--text-primary)]'>Файл модели</h3>
 
                         {selectedFiles.length === 0 ?
                             <>
                                 <label htmlFor="fileProject" className='flex rounded-[4px] px-[15px] ml-[50px] w-[300px] h-[45px] bg-[var(--button-group-primary-bg)] justify-center items-center border cursor-pointer hover:border-[#d0cfcfff] hover:border-[2px] transition-all'>
                                 Загрузить файл модели
                                 </label>
-                                <input id='fileProject' type='file' accept='.gltf, .glb, .bin, .jpf, .jpeg, .png, .mtl, .ifc' className='hidden' onChange={handleFileChange} multiple></input>
+                                <input id='fileProject' type='file' accept='.ifc' className='hidden' onChange={handleFileChange} multiple></input>
                             </>
                         :
                             <div className='flex flex-col justify-center gap-[10px]'>

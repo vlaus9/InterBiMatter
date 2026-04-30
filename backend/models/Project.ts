@@ -2,9 +2,17 @@ import mongoose, { Document, Schema } from "mongoose"
 import { v4 as uuidv4 } from "uuid"
 
 interface IFiles {
-    name: string,
-    type: string,
+    name: string
+    type: string
     path: string
+}
+
+interface IVersions {
+    id: string
+    name: string
+    description?: string
+    date: Date | string
+    filePath: string
 }
 
 export interface IProject extends Document {
@@ -14,6 +22,7 @@ export interface IProject extends Document {
     autor: string
     modelPath: string
     files: IFiles
+    versions: IVersions[]
 }
 
 const projectSchema: Schema<IProject> = new Schema(
@@ -42,6 +51,10 @@ const projectSchema: Schema<IProject> = new Schema(
         },
         files: {
             type: Object,
+            required: true
+        },
+        versions: {
+            type: [Object],
             required: true
         }
 

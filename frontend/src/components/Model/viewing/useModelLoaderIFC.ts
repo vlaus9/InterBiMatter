@@ -41,7 +41,6 @@ const useModelLoaderIFC = (
                     fragBytesTemp = await ifcImporter.process({
                     bytes: ifcBytes,
                     progressCallback: (progress, data) => { 
-                        // console.log(progress, data)
                         if (progress === 1) {
                             setReady(true)
                         }
@@ -143,19 +142,6 @@ const useModelLoaderIFC = (
 
                 const setupModelAndCamera = (box: THREE.Box3, model: FRAGS.FragmentsModel) => {
 
-                    // const size = box.getSize(new THREE.Vector3())
-                    // console.log(size)
-
-                    // const center = box.getCenter(new THREE.Vector3())
-                    // console.log(center)
-
-                    // const maxSize = Math.max(size.x, size.y, size.z)
-                    // const targetSize = 15
-                    // const scale = targetSize / maxSize
-                    // console.log(scale)
-
-                    // model.object.scale.set(scale, scale, scale)
-                    // model.object.updateMatrixWorld(true)
                     editor.setModel(model)
 
                     if (camera) {
@@ -207,39 +193,3 @@ const useModelLoaderIFC = (
 export default useModelLoaderIFC
 
 
-
-
-
- // if (box){
-                //     const size = box.getSize(new THREE.Vector3())
-                    
-                //     const center = box.getCenter(new THREE.Vector3())
-                //     console.log(center)
-    
-                //     //Масштабируем
-                //     const maxSize = Math.max(size.x, size.y, size.z)
-                //     const targetSize = 10
-                //     const scale = targetSize / maxSize
-    
-                //     model.object.scale.set(scale, scale, scale)
-    
-                //     //Центрируем
-                //     model.object.position.copy(center.clone().multiplyScalar(-scale))
-
-                //     console.log(box)
-                    
-                //     if (camera) {
-                //         model.useCamera(camera)
-    
-                //         //Ставим камеру правильно
-                //         const newSphere = box.getBoundingSphere(new THREE.Sphere())
-                //         const radius = newSphere.radius
-                //         console.log(radius)
-                //         camera.position.set(
-                //             radius * 10,
-                //             radius * 20,
-                //             radius * 10
-                //         )
-                //         camera.lookAt(0, 0, 0)
-                //     }
-                // }

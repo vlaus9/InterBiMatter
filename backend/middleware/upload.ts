@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 
 const createProjectDir = (projectId: string) => {
-    const dir = path.join(__dirname, '../../uploads', projectId)
+    const dir = path.join(__dirname, '../../uploads', projectId, '1')
 
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true})
@@ -14,20 +14,8 @@ const createProjectDir = (projectId: string) => {
     return dir
 }
 
-
-const createTempDir = () => {
-    const tempDir = path.join(__dirname, '../../temp')
-
-    if (!fs.existsSync(tempDir)) {
-        fs.mkdirSync(tempDir, { recursive: true })
-    }
-
-    return tempDir
-}
-
 const storage = multer.diskStorage({
     destination: (req: any, file, cb) => {
-        const tempDir = createTempDir()
         if (!req.projectId) {
             req.projectId = uuidv4()
         }
