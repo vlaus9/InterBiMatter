@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAppSelector, useAppDispatch } from './app/hooks.ts'
+import { useAppDispatch } from './app/hooks.ts'
 import useAutoLogOut from './components/Auth/hooks/useAutoLogOut.ts'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
@@ -9,7 +9,7 @@ import RouteLoginForm from './components/Routes/RouteLoginForm.tsx'
 import RouteRegisterForm from './components/Routes/RouteRegisterForm.tsx'
 import RouteProject from './components/Routes/RouteProject.tsx'
 import RouteProfile from './components/Routes/RouteProfile.tsx'
-import CreateProjectForm from './components/CreateProjectForm/CreateProjectForm.tsx'
+import RouteProjectPage from './components/Routes/RouteProjectPage.tsx'
 
 
 const App = () => {
@@ -19,7 +19,6 @@ const App = () => {
   const location = useLocation()
   const dispatch = useAppDispatch()
   const [ splash, setSplash ] = useState(true)
-  const { isAuth }  = useAppSelector((state) => state.authSlice)
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -47,7 +46,7 @@ const App = () => {
           <Route path='/' element={<RouteProfile />}/>
           <Route path='/register' element={<RouteRegisterForm />}/>
           <Route path='/project' element={<RouteProject />}/>
-          {/* <Route path='/createProject' element={<CreateProjectForm />}/> */}
+          <Route path='/projectPage' element={<RouteProjectPage />}/>
         </Routes>
         )
         
@@ -55,8 +54,6 @@ const App = () => {
       </AnimatePresence>
     </div>  
       
-    {/* <CreateProjectForm /> */}
-
     </>
   )
 }

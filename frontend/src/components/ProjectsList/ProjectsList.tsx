@@ -3,6 +3,7 @@ import { getProjectsAll } from "./slice/ProjectsListSlice"
 import { openProject } from "../CreateProjectForm/slices/projectSlice"
 import { useAppSelector, useAppDispatch } from "../../app/hooks"
 import { useNavigate } from "react-router"
+import { selectProject } from "../ProjectPage/slice/ProjectPageSlice"
 
 const ProjectsList: React.FC = () => {
 
@@ -11,11 +12,16 @@ const ProjectsList: React.FC = () => {
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
 
-
-    const openProjectClick = (id: string) => {
-        dispatch(openProject(id))
-        navigate('/Project')
+    const openProjectPage = (id: string) => {
+        dispatch(selectProject(projectList.projects?.find(project => project._id === id)))
+        navigate('/projectPage')
     }
+
+    // это перенести чуть глубже
+    // const openProjectClick = (id: string) => {
+    //     dispatch(openProject(id))
+    //     navigate('/Project')
+    // }
 
     if (user) {
         useEffect(() => {
@@ -28,7 +34,7 @@ if (projectList && projectList.projects) {
     return (
         <>
 
-        <div className='w-full grid grid-cols-5 text-center divide-x-2 divide-solid border border-[var(--button-group-primary-bg)] border-b-[black] border-b-[2px] rounded-t-[10px] mb-[2px]' >
+        <div className='w-full grid grid-cols-5 text-center divide-x-2 divide-solid border border-(--button-group-primary-bg) border-b-[black] border-b-[2px] rounded-t-[10px] mb-[2px]' >
                     <h3 style={{fontWeight: 700}} className=''>Название</h3>
                     <h3 style={{fontWeight: 700}} className=''>Автор</h3>
                     <h3 style={{fontWeight: 700}} className=''>Версия</h3>
@@ -38,7 +44,7 @@ if (projectList && projectList.projects) {
         {
             projectList.projects.map((project) => {
                 return (
-                <div onClick={() => openProjectClick(project._id.toString())} key={project.id} className='w-full grid grid-cols-5 text-center divide-x-2 divide-solid cursor-pointer border border-[var(--button-group-primary-bg)] rounded-[10px] hover:border-[var(--bg-secondary)] mb-[5px]'>
+                <div onClick={() => openProjectPage(project._id!)} key={project.id} className='w-full grid grid-cols-5 text-center divide-x-2 divide-solid cursor-pointer border border-(--button-group-primary-bg) rounded-[10px] hover:border-[var(--bg-secondary)] mb-[5px]'>
                     <h3 className=''>{`${project.name}`}</h3>
                     <h3 className=''>{`${project.autor}`}</h3>
                     {/* Должна быть активная версия файла */}
@@ -62,5 +68,3 @@ if (projectList && projectList.projects) {
 }
 
 export default ProjectsList
-
-// В СЛАЙС ЗАНОСИТ ЭТИ ПРОЕКТЫ, ОСТАЛОСЬ ПОНЯТЬ КАК ИХ ОТТУДА ДОСТАТЬ И ПОКАЗАТЬ ТАБЛИЧКОЙ

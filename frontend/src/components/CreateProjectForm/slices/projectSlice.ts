@@ -16,13 +16,13 @@ interface IVersions {
 }
 
 export interface IProject {
-    _id: string | ''
+    _id?: string | ''
     id: string | ''
     name: string
     creationDate: Date | null
     autor: string
     modelPath: string
-    files: IOrganizedFiles
+    files?: IOrganizedFiles
     versions: IVersions[]
 }
 

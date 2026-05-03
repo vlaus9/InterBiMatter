@@ -4,6 +4,7 @@ import authSlice from '../components/Auth/slices/authSlice'
 import projectList from '../components/ProjectsList/slice/ProjectsListSlice'
 import projectSlice from '../components/CreateProjectForm/slices/projectSlice'
 import elementsModelListSlice from '../components/Model/slice/elementsModelListSlice'
+import projectPage from '../components/ProjectPage/slice/ProjectPageSlice'
 
 
 export const store = configureStore({
@@ -12,7 +13,8 @@ export const store = configureStore({
         authSlice,
         projectList,
         projectSlice,
-        elementsModelListSlice
+        elementsModelListSlice,
+        projectPage
     }
 })
 

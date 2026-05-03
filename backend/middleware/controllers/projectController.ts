@@ -184,9 +184,14 @@ export const createProject = async (req: Request, res: Response) => {
             date: req.body.date,
             filePath: filePathWithUrl
         })
+        project.modelPath = filePathWithUrl
 
     }
-    catch {
-
+    catch (error: any) {
+        console.error('Ошибка при добавлении файла в проект', error)
+        res.status(500).json({
+            success: false,
+            error: error.message ||  'Ошибка при добавлении файла в проект'
+        })
     }
  }
