@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { select } from 'three/src/nodes/TSL.js'
+
 
 
 const ProjectPage: React.FC = () => {
@@ -13,15 +13,15 @@ const ProjectPage: React.FC = () => {
     return (
         <div className='flex flex-col items-center w-screen h-screen bg-(--bg-primary)'>
             <div className='w-[80%] mt-[50px]'>
-                <h1 className='text-[28px] text-(--text-primary)]' style={{fontWeight: '800'}}>Профиль</h1>
+                <h1 className='text-[28px] text-(--text-primary)]' style={{fontWeight: '800'}}>Проект</h1>
             </div>
             <div className='w-[80%] mt-10'>
                 <span className='flex gap-5 text-[20px] text-(--text-primary)]'>
-                    <h1>Пользователь:</h1>
+                    <h1>Название:</h1>
                     <h1 style={{fontWeight: '800'}}>{selectProject.name}</h1>
                 </span>
                 <span className='flex gap-5 text-[20px] text-(--text-primary)]'>
-                    <h1>Логин:</h1>
+                    <h1>Активная версия:</h1>
                     {/* <h1 style={{fontWeight: '800'}}>{user?.email}</h1> */}
                 </span>
             </div>
@@ -38,6 +38,9 @@ const ProjectPage: React.FC = () => {
                    ) 
                 })}
             </div>
+            <button>
+                Добавить файл
+            </button>
         </div>
     )
 }

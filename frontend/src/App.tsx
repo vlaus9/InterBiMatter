@@ -10,6 +10,7 @@ import RouteRegisterForm from './components/Routes/RouteRegisterForm.tsx'
 import RouteProject from './components/Routes/RouteProject.tsx'
 import RouteProfile from './components/Routes/RouteProfile.tsx'
 import RouteProjectPage from './components/Routes/RouteProjectPage.tsx'
+import AddFileToProjectForm from './components/AddFileToProjectForm/AddFileToProjectForm.tsx'
 
 
 const App = () => {
@@ -54,6 +55,7 @@ const App = () => {
       </AnimatePresence>
     </div>  
       
+      <AddFileToProjectForm />
     </>
   )
 }
