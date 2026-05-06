@@ -15,6 +15,27 @@ const AddFileToProjectForm: React.FC = () => {
         }
     }
 
+    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        try {
+
+            if (!file || !version || !description) {
+                return
+            }
+
+            const formData = new FormData()
+            formData.append('name', version)
+            formData.append('description', description)
+            formData.append('file', file)
+
+            
+
+        } catch (error) {
+            console.log('Ошибка добавления файл в проект', error)
+        }
+    }
+
     return (
         <motion.div
             initial='initial'
@@ -25,26 +46,46 @@ const AddFileToProjectForm: React.FC = () => {
             
             <div className='w-[60%] min-w-[500px] h-[70%] min-h-[600px] bg-(--bg-primary) border-2 border-(--button-group-primary-bg) m-[30px] rounded-[15px]'>
                 <div className='flex justify-center items-center h-20'>
-                    <h1 className='text-(--text-primary) text-[26px] mb-2.5' style={{fontWeight: '800'}}>
+                    <h1 className='text-(--text-primary) text-[26px] mt-3 mb-2.5' style={{fontWeight: '800'}}>
                         Добавить файл в проект
                     </h1>
                 </div>
 
-                <form className='h-[80%] flex flex-col justify-center items-center'>
+                <form onSubmit={handleSubmit} className='h-[90%] flex flex-col justify-center items-center'>
                     <div className='flex gap-3 w-[80%] justify-between mb-10'>
                         <label htmlFor='fileVersion' className='text-[18px] text-(--text-primary) pt-1.5'>Версия файла</label>
-                        <input id='fileVersion' type='text' placeholder='Например:  V.0.1' value={version} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVersion(e.target.value)} required className='w-[600px] h-[45px] p-2 border border-black bg-(--button-group-primary-bg) outline-(--button-group-primary-bg) rounded-sm text-(--text-primary) placeholder:text-[black] placeholder:opacity-[0.5]'></input>
+                        <input id='fileVersion' type='text' placeholder='Например: V.0.1' value={version} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVersion(e.target.value)} required className='w-[600px] h-[45px] p-2 border border-black bg-(--button-group-primary-bg) outline-(--button-group-primary-bg) rounded-sm text-(--text-primary) placeholder:text-[black] placeholder:opacity-[0.5]'></input>
                     </div>
                     <div className='flex gap-3 w-[80%] justify-between mb-10'>
                         <label htmlFor='fileVersion' className='text-[18px] text-(--text-primary) pt-1.5'>Описание</label>
-                        <textarea id='fileVersion' type='text' placeholder='Опишите внесенные в файл изменения...' value={description} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)} required className='w-[600px] h-[135px] h-max-[300px] p-2 border border-black bg-(--button-group-primary-bg) outline-(--button-group-primary-bg) rounded-sm text-(--text-primary) placeholder:text-[black] placeholder:opacity-[0.5]'></textarea>
+                        <textarea id='fileVersion' placeholder='Опишите внесенные в файл изменения...' value={description} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)} required className='w-[600px] h-[135px] max-h-[300px] min-h-20 p-2 border border-black bg-(--button-group-primary-bg) outline-(--button-group-primary-bg) rounded-sm text-(--text-primary) placeholder:text-[black] placeholder:opacity-[0.5]'></textarea>
                     </div>
-                    <div className='flex gap-3 w-[80%] justify-between'>
-                        <h3 className='text-[18px] text-(--text-primary) pt-1.5'>Файл модели:</h3>
-                        <label htmlFor='fileProject' className='flex justify-center items-center cursor-pointer px-[15px] ml-[50px] w-[600px] h-[45px] bg-(--button-group-primary-bg) rounded-sm text-[18px] border text-(--text-primary) hover:border-[#d0cfcfff] hover:border-2 transition-all'>Выбрать файл модели</label>
-                        <input id='fileProject' type='file' className='hidden' accept='.ifc' onChange={handleFileChange}></input>
-                    </div>
+
+                    {
+                        !file ? (
+                            <div className='flex gap-3 w-[80%] justify-between'>
+                                <h3 className='text-[18px] text-(--text-primary) pt-1.5'>Файл модели:</h3>
+                                <label htmlFor='fileProject' className='flex justify-center items-center cursor-pointer px-[15px] ml-[50px] w-[600px] h-[45px] bg-(--button-group-primary-bg) rounded-sm text-[18px] border text-(--text-primary) hover:border-[#d0cfcfff] hover:border-2 transition-all'>Выбрать файл модели</label>
+                                <input id='fileProject' type='file' className='hidden' accept='.ifc' onChange={handleFileChange}></input>
+                            </div>
+                        ) : (
+                            <div className='flex gap-3 w-[80%] justify-between'>
+                                <h3 className='text-[18px] text-(--text-primary) pt-1.5'>Файл модели:</h3>
+                                <div className='flex flex-col items-center gap-5'>
+                                    <label htmlFor='fileProject' className='flex justify-center items-center cursor-pointer px-[15px] ml-[50px] w-[600px] h-[45px] bg-(--button-group-primary-bg) rounded-sm text-[18px] border text-(--text-primary) hover:border-[#d0cfcfff] hover:border-2 transition-all'>Выбрать другой файл</label>
+                                    <input id='fileProject' type='file' className='hidden' accept='.ifc' onChange={handleFileChange}></input>
+                                    <h1 className='text-[18px]'>Выбран файл: {file.name}</h1>
+                                </div>
+                            </div>
+                        )
+                    }
                     
+
+                    <div className='mt-25'>
+                        <button type='submit' className='py-2.5 px-[15px] border rounded-sm bg-(--button-group-primary-bg) hover:bg-[#9f9e9eff] transition-all cursor-pointer'>
+                            <h1 className='text-[18px]'>Добавить файл в проект</h1>
+                        </button>
+                    </div>
                 </form>
             </div>
 

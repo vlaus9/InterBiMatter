@@ -182,7 +182,7 @@ export const createProject = async (req: Request, res: Response) => {
             name: req.body.versionName,
             description: req.body.description,
             date: req.body.date,
-            filePath: filePathWithUrl
+            filePath: filePathWithUrl,
         })
         project.modelPath = filePathWithUrl
 
