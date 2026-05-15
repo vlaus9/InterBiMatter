@@ -92,7 +92,7 @@ export const createProject = async (req: Request, res: Response) => {
         modelPath: modelUrl,
         files: [],
         versions: [{
-            id: String(uuidv4),
+            id: String(uuidv4()),
             name: req.body.versionName,
             date: req.body.date,
             filePath: modelUrl
@@ -168,23 +168,33 @@ export const createProject = async (req: Request, res: Response) => {
         })
     }
     try {
-        const project = await Project.findById(req.params.id)
+        const project = await Project.findOne({ id: req.params.projectId })
         if (!project) {
             return res.status(404).json({
                 error: 'Проект не найдет'
             })
         }
 
+        
         const file = req.file as Express.Multer.File
-        const filePathWithUrl = `${req.protocol}://${req.get('host')}/uploads/${path.basename(path.dirname(req.projectDir))}/ ${path.basename(req.projectDir)}/${file.originalname}`
+        const filePathWithUrl = `${req.protocol}://${req.get('host')}/uploads/${path.basename(path.dirname(req.projectDir))}/${path.basename(req.projectDir)}/${file.originalname}`
         project.versions.push({
-            id: String(uuidv4),
+            id: String(uuidv4()),
             name: req.body.versionName,
             description: req.body.description,
             date: req.body.date,
             filePath: filePathWithUrl,
         })
         project.modelPath = filePathWithUrl
+
+        await project.save()
+
+        const versions = project.versions
+
+        res.status(201).json({
+            status: 'success',
+            data: { versions }
+        })
 
     }
     catch (error: any) {

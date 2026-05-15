@@ -1,14 +1,16 @@
 import { useState } from 'react'
-import { useAppDispatch, useAppSelector } from '../../app/hooks'
-
+import { useAppSelector } from '../../app/hooks'
+import AddFileToProjectForm from '../AddFileToProjectForm/AddFileToProjectForm'
+import { CloseOutlined } from '@ant-design/icons'
+import { motion, AnimatePresence } from 'framer-motion'
+import { AnimateVariants } from '../Auth/animate/AnimateVariants'
 
 
 const ProjectPage: React.FC = () => {
 
-    const dispatch = useAppDispatch()
     const selectProject = useAppSelector((state) => state.projectPage)
+    const [isOpenAddFileWindow, setIsOpenAddFileWindow] = useState<boolean>(false)
 
-    console.log(selectProject)
 
     return (
         <div className='flex flex-col items-center w-screen h-screen bg-(--bg-primary)'>
@@ -38,9 +40,25 @@ const ProjectPage: React.FC = () => {
                    ) 
                 })}
             </div>
-            <button>
+            <button onClick={() => setIsOpenAddFileWindow(true)}>
                 Добавить файл
             </button>
+
+            <AnimatePresence mode='wait'>
+                {isOpenAddFileWindow && 
+                    <>
+                        <AddFileToProjectForm />
+                        <motion.div
+                            initial={AnimateVariants.createProjectFormVariant.initial}
+                            animate={AnimateVariants.createProjectFormVariant.in}
+                            exit={AnimateVariants.createProjectFormVariant.out}
+                            >   
+                            <CloseOutlined onClick={() => setIsOpenAddFileWindow(false)} style={{color: 'white'}} className='absolute right-[30px] top-5 scale-[1.3] text-(--text-primary) cursor-pointer hover:scale-[1.4] transition'/>
+                        </motion.div>
+                    </>}
+            </AnimatePresence>
+            
+            
         </div>
     )
 }

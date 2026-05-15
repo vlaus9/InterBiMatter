@@ -54,8 +54,7 @@ const App = () => {
         }
       </AnimatePresence>
     </div>  
-      
-      <AddFileToProjectForm />
+
     </>
   )
 }

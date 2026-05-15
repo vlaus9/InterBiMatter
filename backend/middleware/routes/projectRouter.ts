@@ -6,7 +6,7 @@ import add from "../add"
 const projectRouter: Router = Router()
 
 projectRouter.post('/createProject', upload.array('files', 20), createProject)
-projectRouter.post('/addFileToProject', add.single('file'), addFileToProject)
+projectRouter.post('/addFileToProject/:projectId', add.single('file'), addFileToProject)
 projectRouter.get('/getProject/:id', getProjectById)
 projectRouter.get('/getProjectsAll', getProjectAll)
 projectRouter.delete('/delProject/:id', deleteProject)

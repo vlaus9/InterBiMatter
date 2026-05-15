@@ -21,14 +21,23 @@ const createVersionDir =  async (projectId: string) => {
     const dir = path.join(__dirname, '../../uploads', projectId)
     const nextVersionDir = path.join(dir, await getNextNameFolder(dir))
     
+    await fs.mkdir(nextVersionDir, { recursive: true })
     return nextVersionDir
 }
 
 const storage = multer.diskStorage({
-    destination: (req: any, file, cb) => {
-        req.projectDir = createVersionDir(req.projectId)
+    destination: async (req: any, file, cb) => {
+        const projectId = req.params.projectId
+        if (!projectId) {
+            console.log('В запросе отсутствует projectId')
+        }
+
+        req.projectDir = await createVersionDir(projectId)
         
         cb(null, req.projectDir)
+    }, 
+    filename: (req: any, file, cb) => {
+        cb(null, `${file.originalname}`)
     }
 })
 
