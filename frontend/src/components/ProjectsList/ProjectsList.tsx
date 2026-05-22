@@ -1,6 +1,5 @@
 import { useEffect } from "react"
 import { getProjectsAll } from "./slice/ProjectsListSlice"
-import { openProject } from "../CreateProjectForm/slices/projectSlice"
 import { useAppSelector, useAppDispatch } from "../../app/hooks"
 import { useNavigate } from "react-router"
 import { selectProject } from "../ProjectPage/slice/ProjectPageSlice"
@@ -16,12 +15,6 @@ const ProjectsList: React.FC = () => {
         dispatch(selectProject(projectList.projects?.find(project => project._id === id)))
         navigate('/projectPage')
     }
-
-    // это перенести чуть глубже
-    // const openProjectClick = (id: string) => {
-    //     dispatch(openProject(id))
-    //     navigate('/Project')
-    // }
 
     if (user) {
         useEffect(() => {

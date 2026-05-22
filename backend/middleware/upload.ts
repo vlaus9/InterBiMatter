@@ -35,7 +35,7 @@ const fileFilter = (req: any, file: any, cb: any) => {
     const allowedExtensions = [
         '.gltf', '.glb', '.bin',
         '.jpg', '.jpeg', '.png',
-        '.mlt', '.obj', '.ifc'
+        '.mlt', '.obj', '.ifc', '.bmt'
     ]
 
     const ext = path.extname(file.originalname).toLowerCase()

@@ -1,16 +1,25 @@
 import { useState } from 'react'
-import { useAppSelector } from '../../app/hooks'
+import { useAppSelector, useAppDispatch } from '../../app/hooks'
+import { useNavigate } from 'react-router'
 import AddFileToProjectForm from '../AddFileToProjectForm/AddFileToProjectForm'
 import { CloseOutlined } from '@ant-design/icons'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AnimateVariants } from '../Auth/animate/AnimateVariants'
+import { openProject } from '../CreateProjectForm/slices/projectSlice'
 
 
 const ProjectPage: React.FC = () => {
 
     const selectProject = useAppSelector((state) => state.projectPage)
+    const dispatch = useAppDispatch()
+    const navigate = useNavigate()
+
     const [isOpenAddFileWindow, setIsOpenAddFileWindow] = useState<boolean>(false)
 
+    const openProjectClick = (id: string) => {
+        dispatch(openProject(id))
+        navigate('/Project')
+    }
 
     return (
         <div className='flex flex-col items-center w-screen h-screen bg-(--bg-primary)'>
@@ -42,6 +51,10 @@ const ProjectPage: React.FC = () => {
             </div>
             <button onClick={() => setIsOpenAddFileWindow(true)}>
                 Добавить файл
+            </button>
+
+            <button onClick={() => openProjectClick(selectProject.id)}>
+                Открыть проект
             </button>
 
             <AnimatePresence mode='wait'>

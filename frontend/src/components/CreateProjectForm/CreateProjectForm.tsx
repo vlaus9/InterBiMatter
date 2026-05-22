@@ -103,7 +103,7 @@ const CreateProjectForm: React.FC = () => {
                                 <label htmlFor="fileProject" className='flex rounded-sm px-[15px] w-[300px] h-[45px] bg-[var(--button-group-primary-bg)] justify-center items-center border cursor-pointer hover:border-[#d0cfcfff] hover:border-[2px] transition-all'>
                                 Выбрать другой файл
                                 </label>
-                                <input id='fileProject' type='file' accept='.gltf, .glb, .bin, .jpf, .jpeg, .png, .mtl, .ifc' className='hidden' onChange={handleFileChange} multiple></input>
+                                <input id='fileProject' type='file' accept='.gltf, .glb, .bin, .jpf, .jpeg, .png, .mtl, .ifc, .bmt' className='hidden' onChange={handleFileChange} multiple></input>
                                 <h3 className='w-[300px] text-[16px] text-center'>Выбран файл: {fileName}</h3>
                             </div>
                         }

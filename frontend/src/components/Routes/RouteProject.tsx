@@ -3,6 +3,7 @@ import { AnimateVariants } from "../Auth/animate/AnimateVariants"
 import { SmartButtonDataAttribut, SmartButtonDataProfile } from "../SmartButton/data/SmartButtonData"
 import { useAppSelector } from "../../app/hooks"
 import ModelViewer from "../Model/ModelViewer"
+import ModelViewerBMT from "../Model/ModelViewerBMT"
 import ModalWindow from "../ModalWindow/ModalWindow"
 import SmartButton from "../SmartButton/SmartButtonComponent"
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute"
@@ -11,12 +12,8 @@ import ProtectedRoute from "../ProtectedRoute/ProtectedRoute"
 const RouteProject: React.FC = () => {
 
     const project = useAppSelector((state) => state.projectSlice.project)
-
-    // if (!project) {
-    //    return <div>Проект отсутствует</div> 
-    // }
-    
-    const modelUrl = project?.modelPath
+    if (!project) return
+    const modelUrl = project.modelPath
 
     return (
     <ProtectedRoute>
@@ -33,11 +30,13 @@ const RouteProject: React.FC = () => {
             }}
             className='relative'>
 
-                <ModelViewer modelUrl={modelUrl as string}/>
+                <ModelViewerBMT />
 
-                <div className='absolute flex flex-col w-auto left-[1vw] top-[80px]'>
+                {/* <ModelViewer modelUrl={modelUrl as string}/> */}
 
-                  <div className='absolute rounded-[20px] top-[0] w-[70px] bg-[var(--button-group-primary-bg)] h-full shadow-[0_0_0_2px_#878585d6]'> 
+                <div className='absolute flex flex-col w-auto left-[1vw] top-20'>
+
+                  <div className='absolute rounded-[20px] top-0 w-[70px] bg-(--button-group-primary-bg) h-full shadow-[0_0_0_2px_#878585d6]'> 
                   </div>
 
                   {SmartButtonDataAttribut.map((el) => {
@@ -49,13 +48,14 @@ const RouteProject: React.FC = () => {
                   })}                  
                 </div>
 
-                <div className='absolute w-auto right-[1vw] top-[80px]'>
-                    <div className='absolute rounded-[20px] right-[0] top-[0] w-[70px] bg-[var(--button-group-primary-bg)] h-full shadow-[0_0_0_2px_#878585d6]'> 
+                <div className='absolute w-auto right-[1vw] top-20'>
+                    <div className='absolute rounded-[20px] right-0 top-0 w-[70px] bg-(--button-group-primary-bg) h-full shadow-[0_0_0_2px_#878585d6]'> 
                     </div>
                     <SmartButton config={SmartButtonDataProfile[0]} />
                 </div>
 
                 <ModalWindow />
+
         </motion.div>
     </ProtectedRoute>
     )

@@ -5,13 +5,9 @@ import useAnimation from "./viewing/useAnimation"
 import useSceneSetup from "./viewing/useSceneSetup"
 import useResize from "./viewing/useResize"
 import useModelLoaderIFC from "./viewing/useModelLoaderIFC"
-import AddItemModal from "./editing-UI/AddItemModal"
-import CreateItemModal from "./editing-UI/CreateItemModal"
-import AddRelationModal from "./editing-UI/AddRelationModal"
-import PropertiesTable from "./editing-UI/PropertiesTable"
 import { editor } from "./editing/usePropertiesEditor"
 import InfoCurrentElement from "./info-UI/InfoCurrentElement"
-import ElementsModelList from "./info-UI/ElementsModelList"
+
 
 interface IModelViewerProps {
     modelUrl: string,
@@ -48,23 +44,17 @@ const ModelViewer: React.FC<IModelViewerProps> = ({
         
         
     return (
-        <div className="absolute left-[0] top-[0] w-[100vw] h-[100vh]">
+        <div className="absolute left-0 top-0 w-screen h-screen">
             <div
             ref={containerRef}
             className='relative w-full h-full'
             >
 
                 <InfoCurrentElement />
-                {/* <ElementsModelList /> */}
+
                 
             </div>
 
-
-            {/* пока отложим */}
-            {/* <AddItemModal />
-            <CreateItemModal />
-            <AddRelationModal />
-            <PropertiesTable /> */}
         </div>
     )
 }
