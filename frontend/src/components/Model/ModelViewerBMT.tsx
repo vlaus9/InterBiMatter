@@ -1,28 +1,57 @@
 import { Viewer, loader, type ViewerLoadedModels, type ViewerApi, type ViewerSelection } from "bimatter-viewer-react"
 import { useState, useEffect, useRef } from "react"
 import { useAppSelector } from "../../app/hooks"
+import { GetFlatData } from "./ModelPropertiesTableBMT/services/getFlatData"
 
 
 const ModelViewerBMT: React.FC = () => {
 
-    const [modelsData, setModelsData] = useState<ViewerLoadedModels>()
+    const [modelsData, setModelsData] = useState<ViewerLoadedModels | undefined>({})
     const [selected, setSelected] = useState<ViewerSelection>({})
     const viewerRef = useRef<ViewerApi>(null)
     const currentProject = useAppSelector((state) => state.projectSlice.project)
     if (!currentProject) return null
 
+    // const handleModelsData = (data: ViewerLoadedModels | undefined) => {
+    //     useEffect(() => {
+    //         if (data) {
+    //             setModelsData(data)
+    //         }
+    //     }, [data])
+    // }
+
+    const loadInitialModel = (viewer: ViewerApi) => {
+        void viewer.models.loadModels([currentProject.modelPath], { clearViewer: true, onModelsDataChange: (data) => {
+            setTimeout(() => {
+                if (data) {
+                    setModelsData(data)
+                }
+            }, 0) 
+        }
+    })}
+
+        console.log(currentProject.modelPath)
+    // useEffect(() => {
+    //     loader.loadModel([currentProject.modelPath], { useIfcSpace: true }).then(setModelsData)
+    // }, [])
+
     useEffect(() => {
-        loader.loadModel([currentProject.modelPath], { useIfcSpace: true }).then(setModelsData)
-    }, [])
-
-
-    if (!modelsData) return
+        const data = viewerRef.current?.properties.getModelProps()
+        console.log(data)
+                if (data) {
+                    const deepData = Object.values(data || {})
+                    const flatData = GetFlatData.parse(deepData[0] || {})
+                    console.log(deepData)
+                    console.log(flatData)
+                    console.log(GetFlatData.getKeys(flatData))
+                }
+    }, [modelsData])
 
     return (
         <>
             
             
-            <div className='p-5 bg-amber-950 absolute bottom-0 flex gap-10 text-white text-2xl z-10'>  
+            <div className='p-5 absolute bottom-0 flex gap-10 text-white text-2xl z-10'>  
 
                 <button onClick={() => viewerRef.current?.camera.fitCamera()}>
                     Camera Fit
@@ -36,15 +65,16 @@ const ModelViewerBMT: React.FC = () => {
                 <button onClick={() => viewerRef.current?.geometryUtils.showAll()}>
                     Show All
                 </button>
-                <button onClick={() => console.log(selected)}>
+                <button onClick={() => console.log(selected[0][0])}>
                     Show Selected
                 </button>
                 
             </div>
 
-            <Viewer selected={selected} onSelectedChange={setSelected} ref={viewerRef} modelsData={modelsData} onReady={() => { 
-                console.log('готово')
-                viewerRef.current?.camera.fitCamera()}} showStats/>
+            <Viewer selected={selected} materialMode='performance' performanceMode onSelectedChange={setSelected} ref={viewerRef} modelsData={modelsData} onReady={loadInitialModel}/>
+                
+
+            
             
         </>
     )
@@ -53,64 +83,13 @@ const ModelViewerBMT: React.FC = () => {
 
 export default ModelViewerBMT
 
-// import { useEffect, useRef, useState } from "react";
-// import {
-//     loader,
-//     Viewer,
-//     type ViewerApi,
-//     type ViewerLoadedModels,
-//     type ViewerSelection,
-// } from "bimatter-viewer-react";
 
-// function ModelViewerBMT() {
-//     const viewerRef = useRef<ViewerApi>(null);
-//     const [modelsData, setModelsData] = useState<ViewerLoadedModels>();
-//     const [selected, setSelected] = useState<ViewerSelection>({});
-//     useEffect(() => {
-//         loader.loadModel(["Clinic_Architectural.ifc"]).then(setModelsData);
-//     }, []);
-
-//     if (!modelsData) return null;
-
-//     console.log(viewerRef.current?.camera.getIntersection(true))
-    
-//     return (
-//         <>
-
-//             <div className='z-10 absolute bottom-0 flex gap-5 text-white text-2xl'>
-
-//                 <button onClick={() => viewerRef.current?.camera.fitCamera()}>
-//                     Fit
-//                 </button>
-//                 <button
-//                     onClick={() => viewerRef.current?.geometryUtils.hideSelected()}
-//                 >
-//                     Hide selected
-//                 </button>
-//                 <button
-//                     onClick={() =>
-//                         viewerRef.current?.geometryUtils.isolateSelected()
-//                     }
-//                 >
-//                     Isolate selected
-//                 </button>
-//                 <button onClick={() => viewerRef.current?.geometryUtils.showAll()}>
-//                     Show all
-//                 </button>
-//                 <button onClick={() => console.log(selected)}>
-//                     Show selected
-//                 </button>
-
-//             </div>
-            
-
-//             <Viewer
-//                 ref={viewerRef}
-//                 modelsData={modelsData}
-//                 selected={selected}
-//                 onSelectedChange={setSelected}
-//             />
-//         </>
-//     );
-// }
-// export default ModelViewerBMT
+// const data = viewerRef.current?.properties.getModelProps()
+                // if (data) {
+                //     const deepData = data[0]
+                //     console.log(deepData)
+                    // const flatData = GetFlatData.parse(deepData)
+                    // console.log(flatData)
+                    // console.log(data)
+                    // console.log(GetFlatData.getKeys(flatData))
+                // }

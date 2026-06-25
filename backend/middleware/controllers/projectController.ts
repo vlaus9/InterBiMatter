@@ -41,7 +41,7 @@ export const getProjectAll = async (req: Request, res: Response) => {
 
 export const getProjectById = async (req: Request, res: Response) => {
     try {
-        const project = await Project.findById(req.params.id)
+        const project = await Project.findOne( {id: req.params.id})
 
         if (!project) {
             return res.status(404).json({
@@ -94,7 +94,7 @@ export const createProject = async (req: Request, res: Response) => {
         versions: [{
             id: String(uuidv4()),
             name: req.body.versionName,
-            date: req.body.date,
+            date: new Date().toLocaleString(),
             filePath: modelUrl
         }]
     })
@@ -182,7 +182,7 @@ export const createProject = async (req: Request, res: Response) => {
             id: String(uuidv4()),
             name: req.body.versionName,
             description: req.body.description,
-            date: req.body.date,
+            date: new Date().toLocaleString(),
             filePath: filePathWithUrl,
         })
         project.modelPath = filePathWithUrl

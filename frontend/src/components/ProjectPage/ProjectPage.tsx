@@ -14,46 +14,70 @@ const ProjectPage: React.FC = () => {
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
 
+    // console.log(selectProject)
+
     const [isOpenAddFileWindow, setIsOpenAddFileWindow] = useState<boolean>(false)
+    const [versionClicked, setVersionClicked] = useState<string>('')
+    const [openingVersion, setOpeningVersion] = useState<string>(selectProject.versions[0].id)
 
     const openProjectClick = (id: string) => {
         dispatch(openProject(id))
         navigate('/Project')
     }
 
+    const backToProfile = () => {
+        navigate('/')
+    }
+
     return (
         <div className='flex flex-col items-center w-screen h-screen bg-(--bg-primary)'>
-            <div className='w-[80%] mt-[50px]'>
-                <h1 className='text-[28px] text-(--text-primary)]' style={{fontWeight: '800'}}>Проект</h1>
+            <div className='w-[95%] mt-8'>
+                <h1 className='hover:cursor-pointer' onClick={() => backToProfile()}>← Вернуться в профиль</h1>
             </div>
-            <div className='w-[80%] mt-10'>
-                <span className='flex gap-5 text-[20px] text-(--text-primary)]'>
+            <div className='w-[80%] mt-8'>
+                <h1 className='text-[28px] text-(--text-primary)' style={{fontWeight: '800'}}>Проект</h1>
+            </div>
+            <div className='w-[80%] mt-8'>
+                <span className='flex gap-5 text-[20px] text-(--text-primary)'>
                     <h1>Название:</h1>
                     <h1 style={{fontWeight: '800'}}>{selectProject.name}</h1>
                 </span>
-                <span className='flex gap-5 text-[20px] text-(--text-primary)]'>
+                <span className='flex gap-5 text-[20px] text-(--text-primary)'>
                     <h1>Активная версия:</h1>
                     {/* <h1 style={{fontWeight: '800'}}>{user?.email}</h1> */}
                 </span>
             </div>
             
-            <div className='w-[80%] h-[60%] mt-10 rounded-[15px] bg-(--button-group-primary-bg)] border-2 border-[#808080ff]'>
-                {/* СЮДА СПИСОК ВЕРСИЙ */}
-                {selectProject.versions.map((version) => {
-                   return (
-                    <div key={version.id}>
-                        <h1>{`${version.filePath}`}</h1>
-                        <h1>{`${version.id}`}</h1>
-                        <h1>{`${version.date}`}</h1>
-                    </div>
-                   ) 
-                })}
+            <div className='flex justify-center w-[80%] h-[50%] mt-10 rounded-[15px] bg-(--button-group-primary-bg) border-2 border-[#808080ff]'>
+
+                <div className='w-[99%] overflow-scroll'>
+                    {selectProject.versions.map((version) => {
+                        return (
+                            <div className={`mb-4 mt-1 rounded-[10px] border border-(--bg-secondary) bg-(--button-group-primary-bg) px-4 py-1 hover:bg-(--project-versions-hover-bg) hover:cursor-pointer ${versionClicked === version.id && `bg-[#a1a1a1d6]`}`} key={version.id} 
+                            onClick={() => {
+                                setVersionClicked(version.id)
+                                // НАДО ПОЧИНИТЬ ОТКРЫТИЕ ВЕРСИИ ПРОЕКТА, Т К СЕЙЧАС ОТКРЫВАЕТ ПО id ПРОЕКТА
+                                setOpeningVersion(version.id)
+                                console.log([versionClicked, openingVersion])
+                            }}
+                                >
+                                <h1>Имя файла: {`${version.filePath.split('/').pop()}`}</h1>
+                                {version.name && <h1>Имя версии: {version.name}</h1>}
+                                {version.description && <h1>Описание: {version.description}</h1>}
+                                <h1>Дата добавления: {`${version.date}`}</h1>
+                                <h1>ID: {`${version.id}`}</h1>
+                            </div>
+                        ) 
+                    })}
+                </div>
+                
             </div>
             <button onClick={() => setIsOpenAddFileWindow(true)}>
                 Добавить файл
             </button>
 
-            <button onClick={() => openProjectClick(selectProject.id)}>
+             {/* НАДО ПОЧИНИТЬ ОТКРЫТИЕ ВЕРСИИ ПРОЕКТА, Т К СЕЙЧАС ОТКРЫВАЕТ ПО id ПРОЕКТА */}
+            <button onClick={() => openProjectClick(openingVersion)}>
                 Открыть проект
             </button>
 

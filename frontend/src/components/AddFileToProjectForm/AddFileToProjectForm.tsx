@@ -3,6 +3,8 @@ import { AnimateVariants } from '../Auth/animate/AnimateVariants'
 import { useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { addVersionToProject } from './slice/versionSlice'
+import { updateVersions } from '../ProjectPage/slice/ProjectPageSlice'
+
 
 const AddFileToProjectForm: React.FC = () => {
     
@@ -20,7 +22,7 @@ const AddFileToProjectForm: React.FC = () => {
         }
     }
 
-    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async(e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
         try {
 
@@ -30,14 +32,14 @@ const AddFileToProjectForm: React.FC = () => {
 
             const formData = new FormData()
             formData.append('projectId', projectId)
-            formData.append('name', version)
+            formData.append('versionName', version)
             formData.append('description', description)
             formData.append('file', file)
 
             const result = await dispatch(addVersionToProject(formData)).unwrap()
-            console.log(result)
 
             if (result) {
+                dispatch(updateVersions(result))
                 setLoaded(true)
             }
 
@@ -94,7 +96,7 @@ const AddFileToProjectForm: React.FC = () => {
                                 <div className='flex gap-3 w-[80%] justify-between'>
                                     <h3 className='text-[18px] text-(--text-primary) pt-1.5'>Файл модели:</h3>
                                     <div className='flex flex-col items-center gap-5'>
-                                        <label htmlFor='fileProject' className='flex justify-center items-center cursor-pointer px-[15px] ml-[50px] w-[600px] h-[45px] bg-(--button-group-primary-bg) rounded-sm text-[18px] border text-(--text-primary) hover:border-[#d0cfcfff] hover:border-2 transition-all'>Выбрать другой файл</label>
+                                        <label htmlFor='fileProject' className='flex justify-center items-center cursor-pointer px-[15px] w-[90%] h-[45px] bg-(--button-group-primary-bg) rounded-sm text-[18px] border text-(--text-primary) hover:border-[#d0cfcfff] hover:border-2 transition-all'>Выбрать другой файл</label>
                                         <input id='fileProject' type='file' className='hidden' accept='.ifc' onChange={handleFileChange}></input>
                                         <h1 className='text-[18px]'>Выбран файл: {file.name}</h1>
                                     </div>
@@ -103,7 +105,7 @@ const AddFileToProjectForm: React.FC = () => {
                         }
                         
 
-                        <div className='mt-25'>
+                        <div className='mt-10'>
                             <button type='submit' className='py-2.5 px-[15px] border rounded-sm bg-(--button-group-primary-bg) hover:bg-[#9f9e9eff] transition-all cursor-pointer'>
                                 <h1 className='text-[18px]'>Добавить файл в проект</h1>
                             </button>

@@ -18,12 +18,12 @@ const Profile: React.FC = () => {
 
     return (
 
-        <div className='flex flex-col items-center w-[100vw] h-[100vh] bg-[var(--bg-primary)]'>
+        <div className='flex flex-col items-center w-[100vw] h-[100vh] bg-(--bg-primary)'>
             <div className='w-[80%] mt-[50px]'>
-                <h1 className='text-[28px] text-[var(--text-primary)]' style={{fontWeight: '800'}}>Профиль</h1>
+                <h1 className='text-[28px] text-(--text-primary)' style={{fontWeight: '800'}}>Профиль</h1>
             </div>
             <div className='w-[80%] mt-[40px]'>
-                <span className='flex gap-[20px] text-[20px] text-[var(--text-primary)]'>
+                <span className='flex gap-[20px] text-[20px] text-(--text-primary)'>
                     <h1>Пользователь:</h1>
                     <h1 style={{fontWeight: '800'}}>{user?.name}</h1>
                 </span>

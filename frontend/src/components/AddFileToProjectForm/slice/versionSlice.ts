@@ -18,7 +18,7 @@ interface IVersionsResponse {
 }
 
 interface IVersionState {
-    version: IVersions | null
+    version: IVersions[] | null
     loading: boolean,
     error: string | null
     isActive: boolean
@@ -73,7 +73,7 @@ const versionSlice = createSlice({
                 state.loading = true;
                 state.error = null
             })
-            .addCase(addVersionToProject.fulfilled, (state, action: PayloadAction<IVersions>) => {
+            .addCase(addVersionToProject.fulfilled, (state, action: PayloadAction<IVersions[]>) => {
                 state.loading = false;
                 state.isActive = true;
                 state.version = action.payload;

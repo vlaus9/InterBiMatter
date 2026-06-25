@@ -16,9 +16,12 @@ const projectPage = createSlice({
     reducers: {
         selectProject: (state, action) => {
             return action.payload
+        },
+        updateVersions: (state, action) => {
+            state.versions = action.payload
         }
     }
 })
 
-export const { selectProject } = projectPage.actions
+export const { selectProject, updateVersions } = projectPage.actions
 export default projectPage.reducer
