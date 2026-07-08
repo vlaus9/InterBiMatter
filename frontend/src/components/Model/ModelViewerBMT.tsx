@@ -2,23 +2,16 @@ import { Viewer, loader, type ViewerLoadedModels, type ViewerApi, type ViewerSel
 import { useState, useEffect, useRef } from "react"
 import { useAppSelector } from "../../app/hooks"
 import { GetFlatData } from "./ModelPropertiesTableBMT/services/getFlatData"
+import { modelData } from "./ModelPropertiesTableBMT/services/ModelDataService"
 
 
 const ModelViewerBMT: React.FC = () => {
 
-    const [modelsData, setModelsData] = useState<ViewerLoadedModels | undefined>({})
+    const [modelsData, setModelsData] = useState<ViewerLoadedModels>({})
     const [selected, setSelected] = useState<ViewerSelection>({})
     const viewerRef = useRef<ViewerApi>(null)
     const currentProject = useAppSelector((state) => state.projectSlice.project)
     if (!currentProject) return null
-
-    // const handleModelsData = (data: ViewerLoadedModels | undefined) => {
-    //     useEffect(() => {
-    //         if (data) {
-    //             setModelsData(data)
-    //         }
-    //     }, [data])
-    // }
 
     const loadInitialModel = (viewer: ViewerApi) => {
         void viewer.models.loadModels([currentProject.modelPath], { clearViewer: true, onModelsDataChange: (data) => {
@@ -30,21 +23,12 @@ const ModelViewerBMT: React.FC = () => {
         }
     })}
 
-        console.log(currentProject.modelPath)
-    // useEffect(() => {
-    //     loader.loadModel([currentProject.modelPath], { useIfcSpace: true }).then(setModelsData)
-    // }, [])
-
     useEffect(() => {
         const data = viewerRef.current?.properties.getModelProps()
-        console.log(data)
-                if (data) {
-                    const deepData = Object.values(data || {})
-                    const flatData = GetFlatData.parse(deepData[0] || {})
-                    console.log(deepData)
-                    console.log(flatData)
-                    console.log(GetFlatData.getKeys(flatData))
-                }
+        if (data) {
+            modelData.load(data)
+        }
+        const flatData = modelData.getFlatData()
     }, [modelsData])
 
     return (
@@ -74,8 +58,7 @@ const ModelViewerBMT: React.FC = () => {
             <Viewer selected={selected} materialMode='performance' performanceMode onSelectedChange={setSelected} ref={viewerRef} modelsData={modelsData} onReady={loadInitialModel}/>
                 
 
-            
-            
+        
         </>
     )
 
@@ -84,12 +67,6 @@ const ModelViewerBMT: React.FC = () => {
 export default ModelViewerBMT
 
 
-// const data = viewerRef.current?.properties.getModelProps()
-                // if (data) {
-                //     const deepData = data[0]
-                //     console.log(deepData)
-                    // const flatData = GetFlatData.parse(deepData)
-                    // console.log(flatData)
-                    // console.log(data)
-                    // console.log(GetFlatData.getKeys(flatData))
-                // }
+
+
+    

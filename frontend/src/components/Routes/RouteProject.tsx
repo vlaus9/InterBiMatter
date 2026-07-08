@@ -65,7 +65,7 @@ const RouteProject: React.FC = () => {
 
                     <ModalWindow />
 
-                    <div className='absolute bottom-20 flex bg-white gap-5'>
+                    <div className='absolute bottom-50 flex bg-white gap-5'>
                         <button onClick={() => setIsOpenModelPropertiesTable(true)}>
                             CLICK
                         </button>
